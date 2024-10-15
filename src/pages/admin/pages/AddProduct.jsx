@@ -8,20 +8,20 @@ function AddProduct() {
 
     const [file, setFile] = useState(null);
     const [imageUrl, setimageUrl] = useState(null);
-    const [title, setTitle] = useState('song1');
-    const [artist, setArtist] = useState('jj');
-    const [album, setAlbum] = useState('hb');
-    const [genre, setGenre] = useState('hbh');
-    const [releaseDate, setReleaseDate] = useState('n ');
-    const [description, setDescription] = useState('kn');
-    const [category, setcategory] = useState('kn');
-    const [time, setTime] = useState('12:65');
-    const [bpm, setBPM] = useState('4664');
+    const [title, setTitle] = useState('');
+    const [artist, setArtist] = useState('');
+    const [album, setAlbum] = useState('');
+    const [genre, setGenre] = useState('');
+    const [releaseDate, setReleaseDate] = useState('');
+    const [description, setDescription] = useState('');
+    const [category, setcategory] = useState('');
+    const [time, setTime] = useState('');
+    const [bpm, setBPM] = useState('');
 
     const [licenses, setLicenses] = useState([
-        { name: 'Silver', file: null, price: '5' },
-        { name: 'Gold', file: null, price: '6' },
-        { name: 'Platinum', file: null, price: '6' },
+        { name: 'Silver', file: null, price: '' },
+        { name: 'Gold', file: null, price: '' },
+        { name: 'Platinum', file: null, price: '' },
     ]);
 
 
