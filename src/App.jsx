@@ -49,9 +49,11 @@ function App() {
             <Route path="/signup" element={<Signup />} />
             <Route path="/productinfo/:id" element={<ProductInfo />} />
             <Route path="/addproduct" element={
-              <ProtecteRouteForAdmin>
+
+              <ProtectedRoute>
                 <AddProduct />
-              </ProtecteRouteForAdmin>
+
+              </ProtectedRoute>
             } />
             <Route path="/updateproduct" element={
               <ProtectedRoute>

@@ -9,8 +9,10 @@ import {
 } from 'firebase/firestore';
 import { fireDB } from '../../firebase/firebaseconfig';
 import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 
 const MyStates = ({ children }) => {
+    const navigation = useNavigate();
     const [mode, setMode] = useState('Light');
     const toggleMode = () => {
         if (mode == 'Light') {
@@ -117,7 +119,8 @@ const MyStates = ({ children }) => {
             await setDoc(doc(fireDB, 'products', products.id), products)
             toast.success("Product Update successfully")
             setTimeout(() => {
-                window.location.href = '/dashboard';
+                navigation('/dashboard')
+                // window.location.href = '/dashboard';
             }, 800)
             getProductData()
             setLoading(false);

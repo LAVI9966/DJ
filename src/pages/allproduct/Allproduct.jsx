@@ -5,8 +5,10 @@ import myContext from '../../context/data/myContext';
 import { useDispatch, useSelector } from 'react-redux';
 import { addToCart } from '../../redux/cartSlice';
 import { toast } from 'react-toastify'; // Assuming you are using react-toastify for notifications
+import { useNavigate } from 'react-router-dom';
 
 function Allproducts() {
+    const navigation = useNavigate();
     const context = useContext(myContext);
     const {
         mode, product, searchkey, filterType
@@ -60,7 +62,9 @@ function Allproducts() {
                                             <tr
                                                 key={index}
                                                 style={{ backgroundColor: mode === 'dark' ? 'rgb(46 49 55)' : '' }}
-                                                onClick={() => window.location.href = `/productinfo/${id}`}
+                                                onClick={() => {
+                                                    navigation(`/productinfo/${id}`)
+                                                }}
                                             >
                                                 <td className="p-4 border-b border-blue-gray-50">
                                                     <img

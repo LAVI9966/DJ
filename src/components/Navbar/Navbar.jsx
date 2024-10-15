@@ -1,6 +1,6 @@
 import { Fragment, useContext, useState } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { BsFillCloudSunFill } from 'react-icons/bs'
 import { FiSun } from 'react-icons/fi'
 import myContext from '../../context/data/myContext'
@@ -8,6 +8,7 @@ import { RxCross2 } from 'react-icons/rx'
 import { useSelector } from 'react-redux'
 
 export default function Navbar() {
+    const navigation = useNavigate();
     const [open, setOpen] = useState(false)
     const user = JSON.parse(localStorage.getItem('user'));
 
@@ -18,7 +19,8 @@ export default function Navbar() {
 
     const logout = () => {
         localStorage.clear('user');
-        window.location.href = '/login'
+        // window.location.href = '/login'
+        navigation('/login')
     }
 
     const cartItems = useSelector((state) => state.cart);
