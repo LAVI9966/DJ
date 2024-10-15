@@ -19,7 +19,6 @@ export default function Navbar() {
 
     const logout = () => {
         localStorage.clear('user');
-        // window.location.href = '/login'
         navigation('/login')
     }
 
