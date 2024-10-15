@@ -41,7 +41,8 @@ function Signup() {
             setEmail("");
             setPassword("");
             console.log('yes')
-            localStorage.setItem('user', JSON.stringify(user))
+            localStorage.setItem('user', JSON.stringify(users))
+            console.log(user);
             navigate('/')
         } catch (error) {
             console.log(error)

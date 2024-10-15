@@ -4,7 +4,7 @@ import Layout from '../../components/Layout/Layout'
 import ordernot from '../../components/IMG/notorder.png'
 
 function Order() {
-    const userid = JSON.parse(localStorage.getItem('user')).user.uid
+    const userid = JSON.parse(localStorage.getItem('user')).user.uid;
     const context = useContext(MyContext)
     const { mode, loading, order } = context
     // console.log(order)

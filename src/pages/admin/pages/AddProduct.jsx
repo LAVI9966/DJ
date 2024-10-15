@@ -2,10 +2,12 @@ import React, { useContext, useState } from 'react'
 import MyContext from '../../../context/data/myContext'
 import { uploadMusicFile, addMusicTrack } from '../../../firebase/musicUploadwithdata'
 import { toast } from 'react-toastify';
+import { DNA, Triangle } from 'react-loader-spinner'
+
 function AddProduct() {
     const context = useContext(MyContext);
     const { products, setproducts, addProduct } = context;
-
+    const [isloading, setisloading] = useState(false);
     const [file, setFile] = useState(null);
     const [imageUrl, setimageUrl] = useState(null);
     const [title, setTitle] = useState('');
@@ -49,6 +51,7 @@ function AddProduct() {
 
         try {
             // Upload the main file and cover image
+            setisloading(true);
             const fileURL = await uploadMusicFile(file);
             const coverImageUrl = await uploadMusicFile(imageUrl);
 
@@ -106,6 +109,8 @@ function AddProduct() {
         } catch (error) {
             console.error('Error uploading music:', error);
             toast.error('Error uploading music.');
+        } finally {
+            setisloading(false);
         }
     };
     return (
@@ -209,12 +214,27 @@ function AddProduct() {
                     </div>
                 ))}
             </form>
-            <button
-                onClick={handleUpload}
-                className="mt-6 w-full py-2 px-4 text-white bg-blue-600 hover:bg-blue-700 rounded-md shadow-md focus:outline-none"
-            >
-                Upload
-            </button>
+            {!isloading &&
+                <button
+                    onClick={handleUpload}
+                    className="mt-6 w-full py-2 px-4 text-white bg-blue-600 hover:bg-blue-700 rounded-md shadow-md focus:outline-none"
+                >
+                    Upload
+                </button>
+            }
+            {isloading && (
+                <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
+                    <Triangle
+                        visible={true}
+                        height="80"
+                        width="80"
+                        color="#4fa94d"
+                        ariaLabel="triangle-loading"
+                        wrapperStyle={{}}
+                        wrapperClass=""
+                    />
+                </div>
+            )}
         </div></>
     );
 }

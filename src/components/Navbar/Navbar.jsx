@@ -73,7 +73,7 @@ export default function Navbar() {
                                         </div>
                                         : ""}
 
-                                    {user?.user?.email === 'lavishgehlod@gmail.com' ?
+                                    {user?.user?.email === 'admin@gmail.com' ?
                                         <div className="flow-root">
                                             <Link to={'/dashboard'} className="-m-2 block p-2 font-medium text-gray-900" style={{ color: mode === 'dark' ? 'white' : '', }}>
                                                 admin
@@ -162,16 +162,26 @@ export default function Navbar() {
                                             Order
                                         </Link>
                                         : ""}
-                                    {user?.user?.email === 'lavishgehlod@gmail.com' ?
+                                    {user?.user?.email === 'admin@gmail.com' ?
 
                                         <Link to={'/dashboard'} className="text-sm font-medium text-gray-700 " style={{ color: mode === 'dark' ? 'white' : '', }}>
                                             Admin
                                         </Link>
                                         : ""}
-
-                                    <a onClick={logout} className="text-sm font-medium text-gray-700 cursor-pointer  " style={{ color: mode === 'dark' ? 'white' : '', }}>
-                                        Logout
-                                    </a>
+                                    {user ?
+                                        <a onClick={logout} className="text-sm font-medium text-gray-700 cursor-pointer  " style={{ color: mode === 'dark' ? 'white' : '', }}>
+                                            Logout
+                                        </a>
+                                        :
+                                        <>
+                                            <Link to={'/login'} className="text-sm font-medium text-gray-700 cursor-pointer  " style={{ color: mode === 'dark' ? 'white' : '', }}>
+                                                Login
+                                            </Link>
+                                            <Link to={'/signup'} className="text-sm font-medium text-gray-700 cursor-pointer  " style={{ color: mode === 'dark' ? 'white' : '', }}>
+                                                Signup
+                                            </Link>
+                                        </>
+                                    }
                                 </div>
 
                                 <div className="hidden lg:ml-8 lg:flex">
