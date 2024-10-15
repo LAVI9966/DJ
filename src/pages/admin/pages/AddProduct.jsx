@@ -195,24 +195,26 @@ function AddProduct() {
                 />
 
                 {/* License inputs with names */}
-                {licenses.map((license, index) => (
-                    <div key={index} className="mt-4">
-                        <label className="font-medium text-gray-800">{license.name} License</label>
-                        <input
-                            type="file"
-                            accept=".pdf"
-                            onChange={(e) => handleLicenseChange(index, 'file', e.target.files[0])}
-                            className="block w-full text-sm text-gray-700 py-2 px-3 border border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-200 focus:ring-offset-2"
-                        />
-                        <input
-                            type="number"
-                            placeholder="Price"
-                            value={license.price}
-                            onChange={(e) => handleLicenseChange(index, 'price', e.target.value)}
-                            className="w-full mt-2 px-3 py-2 text-base text-gray-700 bg-white rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-600"
-                        />
-                    </div>
-                ))}
+                {
+                    licenses.map((license, index) => (
+                        <div key={index} className="mt-4">
+                            <label className="font-medium text-gray-800">{license.name} License</label>
+                            <input
+                                type="file"
+                                accept=".pdf"
+                                onChange={(e) => handleLicenseChange(index, 'file', e.target.files[0])}
+                                className="block w-full text-sm text-gray-700 py-2 px-3 border border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-200 focus:ring-offset-2"
+                            />
+                            <input
+                                type="number"
+                                placeholder="Price"
+                                value={license.price}
+                                onChange={(e) => handleLicenseChange(index, 'price', e.target.value)}
+                                className="w-full mt-2 px-3 py-2 text-base text-gray-700 bg-white rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-600"
+                            />
+                        </div>
+                    ))
+                }
             </form>
             {!isloading &&
                 <button
