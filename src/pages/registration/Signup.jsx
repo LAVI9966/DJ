@@ -8,9 +8,10 @@ import {
 } from 'firebase/auth';
 import { auth, fireDB } from '../../firebase/firebaseconfig';
 import { addDoc, collection, doc, setDoc, getDoc, Timestamp } from 'firebase/firestore';
-
+import { DNA, Triangle } from 'react-loader-spinner'
 function Signup() {
     console.log(auth)
+    const [isloading, setisloading] = useState(false);
     const [name, setNamae] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -24,6 +25,7 @@ function Signup() {
         }
 
         try {
+            setisloading(true);
             const users = await createUserWithEmailAndPassword(auth, email, password);
             console.log(users)
 
@@ -46,6 +48,8 @@ function Signup() {
             navigate('/')
         } catch (error) {
             console.log(error)
+        } finally {
+            setisloading(false);
         }
     }
     const provider = new GoogleAuthProvider();
@@ -129,6 +133,19 @@ function Signup() {
                         Start With Goggle
                     </button>
                 </div>
+                {isloading && (
+                    <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
+                        <Triangle
+                            visible={true}
+                            height="80"
+                            width="80"
+                            color="#4fa94d"
+                            ariaLabel="triangle-loading"
+                            wrapperStyle={{}}
+                            wrapperClass=""
+                        />
+                    </div>
+                )}
             </div>
         </div>
     )

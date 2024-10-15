@@ -6,6 +6,8 @@ import {
     createUserWithEmailAndPassword,
     GoogleAuthProvider, signInWithPopup
 } from 'firebase/auth';
+import { DNA, Triangle } from 'react-loader-spinner'
+
 GoogleAuthProvider, signInWithPopup
 import { auth, fireDB } from '../../firebase/firebaseconfig';
 import { addDoc, collection, doc, setDoc, getDoc, Timestamp } from 'firebase/firestore';
@@ -13,23 +15,27 @@ import { addDoc, collection, doc, setDoc, getDoc, Timestamp } from 'firebase/fir
 function Login() {
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("");
-
+    const [isloading, setisloading] = useState(false);
 
     const navigate = useNavigate();
 
     const login = async () => {
         try {
+            setisloading(true)
             const result = await signInWithEmailAndPassword(auth, email, password);
             toast.success("Login Successful");
             localStorage.setItem('user', JSON.stringify(result));
             navigate('/');
         } catch (error) {
             console.log(error)
+        } finally {
+            setisloading(false)
         }
     }
     const provider = new GoogleAuthProvider();
     const handleGoogleSignIn = async () => {
         try {
+            setisloading(true)
             const result = await signInWithPopup(auth, provider);
             console.log("User Info", result.user);
             console.log("User Info", result.user.displayName);
@@ -54,6 +60,8 @@ function Login() {
             navigate('/')
         } catch (error) {
             console.log(error);
+        } finally {
+            setisloading(false);
         }
     }
     return (
@@ -86,6 +94,19 @@ function Login() {
                         Login
                     </button>
                 </div>
+                {isloading && (
+                    <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
+                        <Triangle
+                            visible={true}
+                            height="80"
+                            width="80"
+                            color="#4fa94d"
+                            ariaLabel="triangle-loading"
+                            wrapperStyle={{}}
+                            wrapperClass=""
+                        />
+                    </div>
+                )}
                 <div>
                     <h2 className='text-white'>Don't have an account <Link className=' text-yellow-500 font-bold' to={'/signup'}>Signup</Link></h2>
                 </div>
