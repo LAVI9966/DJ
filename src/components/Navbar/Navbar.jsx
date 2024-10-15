@@ -91,6 +91,9 @@ export default function Navbar() {
                                             <Link to={'/signup'} className="-m-2 block p-2 font-medium text-gray-900 cursor-pointer" style={{ color: mode === 'dark' ? 'white' : '', }}>
                                                 Signup
                                             </Link>
+                                            <Link to={'/login'} className="-m-2 block p-2 font-medium text-gray-900 cursor-pointer" style={{ color: mode === 'dark' ? 'white' : '', }}>
+                                                Login
+                                            </Link>
                                         </div>}
 
 
