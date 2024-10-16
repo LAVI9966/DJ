@@ -1,7 +1,9 @@
-import React, { useContext } from 'react'
+import React, { useContext, useState } from 'react'
 import MyContext from '../../context/data/myContext'
 import Layout from '../../components/Layout/Layout'
 import ordernot from '../../components/IMG/notorder.png'
+import { doc } from 'firebase/firestore';
+import { fireDB } from '../../firebase/firebaseconfig';
 
 function Order() {
     const userid = JSON.parse(localStorage.getItem('user')).user.uid;
@@ -9,6 +11,16 @@ function Order() {
     const { mode, loading, order } = context
     // console.log(order)
     const userOrders = order.filter(obj => obj.userid === userid);
+    console.log("hello", order)
+
+    const [UserDeatail, setUserDetail] = useState("")
+    const fetchUserDetails = (item) => {
+        try {
+            const deoRef = doc(fireDB, "",)
+        } catch (error) {
+            console.log(error)
+        }
+    }
     return (
         <Layout>
             {/* {loading && <Loader />} */}
@@ -23,6 +35,7 @@ function Order() {
                                     <div key={index} className="mx-auto max-w-5xl justify-center px-6 md:flex md:space-x-6 xl:px-0">
                                         {
                                             order.cartItems.map((item) => {
+                                                fetchUserDetails(item)
                                                 return (
                                                     <div className="rounded-lg md:w-2/3">
                                                         <div className="justify-between mb-6 rounded-lg bg-white p-6 shadow-md sm:flex sm:justify-start" style={{ backgroundColor: mode === 'dark' ? '#282c34' : '', color: mode === 'dark' ? 'white' : '', }}>
