@@ -6,7 +6,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { addToCart } from '../../redux/cartSlice';
 import { toast } from 'react-toastify'; // Assuming you are using react-toastify for notifications
 import { useNavigate } from 'react-router-dom';
-
+import MusicVisualizer from './MusicVisualizer';
+import audioUrl from '../../components/player/Aaj.mp3'
+const imageUrl = "https://scontent.fidr4-3.fna.fbcdn.net/v/t39.30808-6/275292580_522580079235474_7949005496309654585_n.jpg?_nc_cat=105&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=MOnV8trXDEEQ7kNvgGo_XpA&_nc_zt=23&_nc_ht=scontent.fidr4-3.fna&_nc_gid=AHwowfiY19eh28rVYkVTVRP&oh=00_AYB-nxM9motp87VbYZJ8qYinyxHtgpz_moCw6TfqruR2wg&oe=671562E7"
 function Allproducts() {
     const navigation = useNavigate();
     const context = useContext(myContext);
@@ -25,13 +27,13 @@ function Allproducts() {
     useEffect(() => {
         localStorage.setItem('cart', JSON.stringify(cartItems));
     }, [cartItems]);
-
     useEffect(() => {
         window.scrollTo(0, 0);
     }, []);
 
     return (
         <Layout>
+            <MusicVisualizer audioUrl={audioUrl} imageUrl={imageUrl}></MusicVisualizer>
             <Filter />
             <div className=' container mx-auto px-4 mt-5 '>
                 <div className="p-5 rounded-lg bg-gray-100 drop-shadow-xl border border-gray-200"
