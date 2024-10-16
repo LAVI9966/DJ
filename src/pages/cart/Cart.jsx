@@ -51,8 +51,32 @@ function Cart() {
         }
         return { uid: null, email: null };
     };
+    const handleSubmit = async () => {
+        try {
+            const response = await fetch('http://localhost:3000/send_email', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    to: 'gehlodlavish@gmail.com',
+                    subject: 'Hello pagal ladki',
+                    text: 'big boss dekhne se kuchh nahi hota beta kuchh or karo',
+                    html: '<h1>samji</h1>',
+                }),
+            });
 
-    const buyNow = async () => {
+            const result = await response.text();
+            if (response.ok) {
+                console.log('Success:', result);
+            } else {
+                console.error('Error:', result);
+            }
+        } catch (error) {
+            console.error('Request failed:', error);
+        }
+    };
+    const buyNow = async (e) => {
         if (!name || !address || !pincode || !phoneNumber) {
             return toast.error("All fields are required", {
                 position: "top-center",
@@ -103,6 +127,7 @@ function Cart() {
                     const orderRef = collection(fireDB, "order");
                     await addDoc(orderRef, orderInfo);
                     toast.success('Payment Successful');
+                    await handleSubmit();
                     navigate('/order')
                 } catch (error) {
                     console.error(error.message);

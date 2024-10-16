@@ -8,25 +8,30 @@ import Testimonial from '../../components/testimonials/Testimonials.jsx'
 import Track from '../../components/track/Track.jsx'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
+import { useState } from 'react'
+import { PDFDownloadLink, Document, Page, Text, View, StyleSheet } from "@react-pdf/renderer";
+
 
 const Home = () => {
 
-    return (
-        <>
+    return (<>
 
-            <Layout>
-                <Hero></Hero>
-                <Filter></Filter>
-                <ProductCard></ProductCard>
-                <div className='flex justify-center -mt-10 mb-4'>
-                    <Link to={'/allproducts'}>
-                        <button className='bg-gray-300 px-5 py-2 rounded-xl'>See More </button>
-                    </Link>
-                </div>
-                <Track></Track>
-                <Testimonial></Testimonial>
-            </Layout>
-        </>
+        <Layout>
+            <Hero></Hero>
+            <Filter></Filter>
+            <ProductCard></ProductCard>
+            <div className='flex justify-center -mt-10 mb-4'>
+                <Link to={'/allproducts'}>
+                    <button className='bg-gray-300 px-5 py-2 rounded-xl'>See More </button>
+                </Link>
+            </div>
+            <Track></Track>
+            <Testimonial></Testimonial>
+        </Layout>
+    </>
     )
 }
 export default Home
+
+
+// Create styles for the PDF

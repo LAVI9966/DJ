@@ -3,10 +3,9 @@ import { Dialog, Transition } from '@headlessui/react'
 import { Link } from 'react-router-dom'
 import { BsFillCloudSunFill } from 'react-icons/bs'
 import { FiSun } from 'react-icons/fi'
-import myContext from '../../context/data/myContext'
 import { RxCross2 } from 'react-icons/rx'
 import { useSelector } from 'react-redux'
-import { CiShoppingCart } from "react-icons/ci";
+import myContext from '../../context/data/myContext'
 
 export default function Navbar() {
     const [open, setOpen] = useState(false)
@@ -15,7 +14,9 @@ export default function Navbar() {
     const context = useContext(myContext)
     const { toggleMode, mode } = context
 
+    // Get cart items from Redux store
     const cartItems = useSelector((state) => state.cart)
+    const cartCount = cartItems.length
 
     const logout = () => {
         localStorage.clear('user')
@@ -65,6 +66,7 @@ export default function Navbar() {
                                         <RxCross2 />
                                     </button>
                                 </div>
+
                                 <div className="space-y-6 border-t border-gray-200 px-4 py-6">
                                     <Link
                                         to="/allproducts"
@@ -118,28 +120,6 @@ export default function Navbar() {
                                             </Link>
                                         </>
                                     )}
-                                    <Link to="/" className="-m-2 block p-2 font-medium cursor-pointer">
-                                        <img
-                                            className="inline-block w-10 h-10 rounded-full"
-                                            src="https://overreacted.io/static/profile-pic-c715447ce38098828758e525a1128b87.jpg"
-                                            alt="Dan_Abromov"
-                                        />
-                                    </Link>
-                                </div>
-                                <div className="border-t border-gray-200 px-4 py-6">
-                                    <a href="#" className="-m-2 flex items-center p-2">
-                                        <img
-                                            src="img/indiaflag.png"
-                                            alt=""
-                                            className="block h-auto w-5 flex-shrink-0"
-                                        />
-                                        <span
-                                            className="ml-3 block text-base font-medium"
-                                            style={{ color: mode === 'dark' ? 'white' : '' }}
-                                        >
-                                            INDIA
-                                        </span>
-                                    </a>
                                 </div>
                             </Dialog.Panel>
                         </Transition.Child>
@@ -180,11 +160,13 @@ export default function Navbar() {
                                 />
                             </svg>
                         </button>
+
                         <div className="ml-4 flex lg:ml-0">
                             <Link to="/" className="text-2xl font-bold px-2 py-1">
                                 DURSH
                             </Link>
                         </div>
+
                         <div className="ml-auto flex items-center">
                             <div className="hidden lg:flex lg:space-x-6">
                                 <Link to="/allproducts" className="text-sm font-medium">
@@ -215,11 +197,32 @@ export default function Navbar() {
                                     </>
                                 )}
                             </div>
+
                             <button onClick={toggleMode} className="ml-6">
                                 {mode === 'light' ? <FiSun size={30} /> : <BsFillCloudSunFill size={30} />}
                             </button>
-                            <Link to="/cart" className="ml-4 p-2">
-                                <CiShoppingCart />
+
+                            {/* Cart Icon with Count */}
+                            <Link to="/cart" className="ml-4 p-2 relative">
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    strokeWidth={1.5}
+                                    stroke="currentColor"
+                                    className="w-6 h-6"
+                                >
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        d="M2.25 3h1.386..."
+                                    />
+                                </svg>
+                                {cartCount > 0 && (
+                                    <span className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white bg-red-600 rounded-full">
+                                        {cartCount}
+                                    </span>
+                                )}
                             </Link>
                         </div>
                     </div>
