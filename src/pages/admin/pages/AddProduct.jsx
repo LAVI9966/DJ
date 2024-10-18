@@ -13,19 +13,16 @@ function AddProduct() {
     const [zipFile, setZipFile] = useState(null);
     const [imageUrl, setimageUrl] = useState(null);
     const [title, setTitle] = useState('');
-    const [artist, setArtist] = useState('');
-    const [album, setAlbum] = useState('');
+    const [key, setKey] = useState('')
     const [genre, setGenre] = useState('');
     const [releaseDate, setReleaseDate] = useState('');
-    const [description, setDescription] = useState('');
-    const [category, setcategory] = useState('');
     const [time, setTime] = useState('');
     const [bpm, setBPM] = useState('');
 
     const [licenses, setLicenses] = useState([
-        { name: 'Silver', price: '' },
-        { name: 'Gold', price: '' },
-        { name: 'Platinum', price: '' },
+        { name: 'MP3 License', price: '' },
+        { name: 'WAV License', price: '' },
+        { name: 'Trackouts License', price: '' },
     ]);
 
     const handleMp3Change = (e) => {
@@ -69,16 +66,13 @@ function AddProduct() {
             // Prepare the track metadata
             const track = {
                 title,
-                artist,
-                album,
                 genre,
+                key,
                 releaseDate: new Date(releaseDate).toISOString(),
                 imageUrl: coverImageUrl,
                 mp3FileUrl: mp3FileURL,
                 wavFileUrl: wavFileURL,
                 zipFileUrl: zipFileURL,
-                description,
-                category,
                 time,
                 bpm: parseInt(bpm),
                 licenses: licenses.map((license) => ({
@@ -98,12 +92,9 @@ function AddProduct() {
             setZipFile(null);
             setimageUrl(null);
             setTitle('');
-            setArtist('');
-            setAlbum('');
             setGenre('');
+            setKey('');
             setReleaseDate('');
-            setDescription('');
-            setcategory('');
             setTime('');
             setBPM('');
             setLicenses([
@@ -161,18 +152,12 @@ function AddProduct() {
                         onChange={(e) => setTitle(e.target.value)}
                         className="w-full px-3 py-2 text-base text-gray-700 bg-white rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-600"
                     />
+
                     <input
                         type="text"
-                        placeholder="Artist"
-                        value={artist}
-                        onChange={(e) => setArtist(e.target.value)}
-                        className="w-full px-3 py-2 text-base text-gray-700 bg-white rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-600"
-                    />
-                    <input
-                        type="text"
-                        placeholder="Album"
-                        value={album}
-                        onChange={(e) => setAlbum(e.target.value)}
+                        placeholder="key"
+                        value={key}
+                        onChange={(e) => setkey(e.target.value)}
                         className="w-full px-3 py-2 text-base text-gray-700 bg-white rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-600"
                     />
                     <input
@@ -189,19 +174,8 @@ function AddProduct() {
                         onChange={(e) => setReleaseDate(e.target.value)}
                         className="w-full px-3 py-2 text-base text-gray-700 bg-white rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-600"
                     />
-                    <textarea
-                        placeholder="Description"
-                        value={description}
-                        onChange={(e) => setDescription(e.target.value)}
-                        className="w-full px-3 py-2 resize-none min-h-[120px] text-base text-gray-700 bg-white rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-600"
-                    />
-                    <input
-                        type="text"
-                        placeholder="Category"
-                        value={category}
-                        onChange={(e) => setcategory(e.target.value)}
-                        className="w-full px-3 py-2 text-base text-gray-700 bg-white rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-600"
-                    />
+
+
                     <input
                         type="text"
                         placeholder="Time (MM:SS)"
