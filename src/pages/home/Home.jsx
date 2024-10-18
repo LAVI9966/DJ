@@ -11,14 +11,14 @@ import { Link } from 'react-router-dom'
 import { useState } from 'react'
 import { PDFDownloadLink, Document, Page, Text, View, StyleSheet } from "@react-pdf/renderer";
 
-
 const Home = () => {
 
     return (<>
 
         <Layout>
+
             <Hero></Hero>
-            <Filter></Filter>
+
             <ProductCard></ProductCard>
             <div className='flex justify-center -mt-10 mb-4'>
                 <Link to={'/allproducts'}>

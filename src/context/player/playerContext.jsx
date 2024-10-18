@@ -1,6 +1,4 @@
-import React, { createContext, useState, useContext, useRef } from 'react';
-import { ref, getDownloadURL } from 'firebase/storage';
-import { storage } from '../../firebase/firebaseconfig';
+import React, { createContext, useState, useContext, useRef, useEffect } from 'react';
 
 const PlayerContext = createContext();
 
@@ -10,15 +8,22 @@ export const PlayerProvider = ({ children }) => {
     const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
     const [tracks, setTracks] = useState([]); // Array to hold tracks
     const audioRef = useRef(new Audio());
-    const [curritem, setcurritem] = useState("");
-    const loadTrack = (Url, trackList, index) => {
-        setcurritem(trackList[index]);
-        setTracks(trackList); // Save the list of tracks
-        setCurrentTrackIndex(index); // Set the current track index
-        setAudioUrl(Url);
-        audioRef.current.src = Url; // Set the audio source
+    const [curritem, setCurrItem] = useState({}); // Set initial state as an empty object
+
+    const loadTrack = (fileUrl, trackList, index) => {
+        // If the audio is already playing, pause it before loading the new track
+        if (audioRef.current.src) {
+            audioRef.current.pause();
+        }
+
+        const currentTrack = trackList[index];
+        setCurrItem(currentTrack);
+        setTracks(trackList);
+        setCurrentTrackIndex(index);
+        setAudioUrl(fileUrl);
+        audioRef.current.src = fileUrl;
         audioRef.current.load();
-        audioRef.current.play(); // Auto-play the loaded track
+        audioRef.current.play(); // Play the new track
         setIsPlaying(true);
     };
 
@@ -28,31 +33,39 @@ export const PlayerProvider = ({ children }) => {
         } else {
             audioRef.current.play();
         }
-        setIsPlaying(isPlaying);
+        setIsPlaying(prev => !prev);
     };
 
     const playNext = () => {
-        let nextIndex = (currentTrackIndex + 1) % tracks.length; // Loop back to the start
+        let nextIndex = (currentTrackIndex + 1) % tracks.length;
         loadTrack(tracks[nextIndex].fileUrl, tracks, nextIndex);
     };
 
     const playPrevious = () => {
-        let previousIndex = (currentTrackIndex - 1 + tracks.length) % tracks.length; // Loop to the end
+        let previousIndex = (currentTrackIndex - 1 + tracks.length) % tracks.length;
         loadTrack(tracks[previousIndex].fileUrl, tracks, previousIndex);
     };
 
-    const loopCurrentTrack = () => {
-        audioRef.current.loop = true; // Enable looping for the current track
-    };
+    useEffect(() => {
+        // Cleanup to pause audio and clear source on component unmount
+        return () => {
+            audioRef.current.pause();
+            audioRef.current.src = ''; // Clear source to avoid memory leaks
+        };
+    }, []);
 
     return (
-        <PlayerContext.Provider value={{ loadTrack, togglePlayPause, playNext, playPrevious, loopCurrentTrack, isPlaying, audioUrl, curritem }}>
+        <PlayerContext.Provider value={{ loadTrack, togglePlayPause, playNext, playPrevious, isPlaying, audioUrl, curritem }}>
             {children}
             <audio
                 ref={audioRef}
-                onEnded={playNext} // Automatically play the next track when current ends
-                onLoadedData={() => setIsPlaying(true)}
+                onEnded={playNext}
+                onLoadedData={() => {
+                    setIsPlaying(true)
+                    console.log('Play hua')
+                }}
             />
+
         </PlayerContext.Provider>
     );
 };

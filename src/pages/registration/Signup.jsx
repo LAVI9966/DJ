@@ -13,12 +13,16 @@ function Signup() {
     console.log(auth)
     const [isloading, setisloading] = useState(false);
     const [name, setNamae] = useState("");
+    const [artistName, setArtistName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const navigate = useNavigate();
     const context = useContext(MyContext);
     const { loading, setLoading } = context;
-
+    const handleKey = (event) => {
+        if (event.key == "Enter")
+            signup();
+    }
     const signup = async () => {
         if (name === "" || email === "" || password === "") {
             return toast.error("All Field are Required")
@@ -31,6 +35,7 @@ function Signup() {
 
             const user = {
                 name: name,
+                artistName: artistName,
                 uid: users.user.uid,
                 email: users.user.email,
                 time: Timestamp.now()
@@ -47,7 +52,19 @@ function Signup() {
             console.log(user);
             navigate('/')
         } catch (error) {
-            console.log(error)
+            console.error(error);
+            // Error Toasts for Different Scenarios
+            if (error.code === 'auth/popup-closed-by-user') {
+                toast.error("Popup closed before completing sign-in.");
+            } else if (error.code === 'auth/network-request-failed') {
+                toast.error("Network error. Please check your connection.");
+            } else if (error.code === 'auth/email-already-in-use') {
+                toast.error("Email is already associated with another account.");
+            } else if (error.message.includes('setDoc')) {
+                toast.error("Failed to save user data to Firestore.");
+            } else {
+                toast.error("Something went wrong. Please try again.");
+            }
         } finally {
             setisloading(false);
         }
@@ -99,6 +116,15 @@ function Signup() {
                     />
                 </div>
                 <div>
+                    <input type="text"
+                        name='artistname'
+                        value={artistName}
+                        onChange={(e) => setArtistName(e.target.value)}
+                        className=' bg-gray-600 mb-4 px-2 py-2 w-full lg:w-[20em] rounded-lg text-white placeholder:text-gray-200 outline-none'
+                        placeholder='Artist Name'
+                    />
+                </div>
+                <div>
                     <input type="email"
                         name='email'
                         value={email}
@@ -111,6 +137,7 @@ function Signup() {
                     <input
                         type="password"
                         value={password}
+                        onKeyDown={handleKey}
                         onChange={(e) => { setPassword(e.target.value) }}
                         className=' bg-gray-600 mb-4 px-2 py-2 w-full lg:w-[20em] rounded-lg text-white placeholder:text-gray-200 outline-none'
                         placeholder='Password'

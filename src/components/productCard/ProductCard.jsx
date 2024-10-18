@@ -1,29 +1,52 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import myContext from '../../context/data/myContext';
 import { useDispatch, useSelector } from 'react-redux';
 import { addToCart } from '../../redux/cartSlice';
 import { toast } from 'react-toastify';
-import { doc, getDoc } from 'firebase/firestore';
-import { fireDB } from '../../firebase/firebaseconfig';
 import { usePlayer } from '../../context/player/playerContext';
-import Play from '../player/play2';
-// { title, time, bpm, price }
+import Filter from '../Filter/Filter';
+import { fireDB } from '../../../../durgesh backup/DurgeshBhai/src/firebase/firebaseconfig';
+import { collection, query, where, getDocs } from 'firebase/firestore';
+
 function ProductCard() {
-    const { loadTrack, playNext, playPrevious } = usePlayer();
+
+    const fetchUserPurchases = async (userId) => {
+        const purchases = [];
+        const q = query(collection(fireDB, 'purchases'), where('userId', '==', userId)); // Adjust this according to your database structure
+
+        const querySnapshot = await getDocs(q);
+        querySnapshot.forEach((doc) => {
+            const data = doc.data();
+            purchases.push(...data.licenses); // Assuming licenses are stored as an array in each purchase
+        });
+
+        return purchases;
+    };
+
+    const { loadTrack } = usePlayer();
     const context = useContext(myContext);
-    const { mode, product, searchkey, setsearchkey,
-        filterType, setFilterType, filterPrice, setFilterPrice } = context;
+    const { mode, product } = context;
 
     const dispatch = useDispatch();
     const cartItems = useSelector((state) => state.cart);
 
-    console.log(cartItems);
+    const [selectedLicenses, setSelectedLicenses] = useState({});
+    const [userPurchasedLicenses, setUserPurchasedLicenses] = useState([]);
 
-    const addCart = (product) => {
-        dispatch(addToCart(product));
-        toast.success('Added to cart');
+    useEffect(() => {
+        const getUserPurchases = async () => {
+            const purchases = await fetchUserPurchases(); // Fetch from Firestore
+            setUserPurchasedLicenses(purchases);
+        };
+        getUserPurchases();
+    }, []);
+
+    const handleLicenseChange = (productId, index) => {
+        setSelectedLicenses(prevState => ({
+            ...prevState,
+            [productId]: index,
+        }));
     };
-
     useEffect(() => {
         localStorage.setItem('cart', JSON.stringify(cartItems));
     }, [cartItems]);
@@ -32,6 +55,37 @@ function ProductCard() {
         console.log("ye me hu", item.fileUrl)
         loadTrack(item.fileUrl, product, index);
     }
+    const addCart = (product) => {
+        const licenseIndex = selectedLicenses[product.id] ?? 0;
+        const selectedLicense = product.licenses[licenseIndex];
+
+        // Check if the user has already purchased this license
+        if (userPurchasedLicenses.includes(selectedLicense.name)) {
+            return toast.error(`You have already purchased the ${selectedLicense.name} license.`);
+        }
+
+        // Check if the same product with the same license is already in the cart
+        const alreadyInCart = cartItems.some(
+            (cartItem) => cartItem.id === product.id && cartItem.selectedLicense.name === selectedLicense.name
+        );
+
+        if (alreadyInCart) {
+            return toast.error(`The ${product.title} with ${selectedLicense.name} license is already in your cart.`);
+        }
+
+        const completeProduct = {
+            ...product,
+            selectedLicense,
+        };
+
+        dispatch(addToCart(completeProduct));
+        toast.success('Added to cart');
+    };
+
+    const filteredLicenses = (item) => {
+        return item.licenses.filter(license => !userPurchasedLicenses.includes(license.name));
+    };
+
     return (
         <section className="text-gray-600 body-font">
             <div className="container px-5 py-8 md:py-16 mx-auto">
@@ -42,151 +96,12 @@ function ProductCard() {
                     </h1>
                     <div className="h-1 w-20 bg-pink-600 rounded"></div>
                 </div>
-
-                {/* Product Table */}
-                <div className="p-6 px-0 ">
-                    {/* <table class="w-full mt-4 text-left table-auto min-w-max">
-                        <thead>
-                            <tr>
-                                <th class="p-4 border-y border-blue-gray-100 bg-blue-gray-50/50">
-                                    <p
-                                        class="block font-sans text-sm antialiased font-normal leading-none text-blue-gray-900 opacity-70">
-                                        one
-                                    </p>
-                                </th>
-                                <th class="p-4 border-y border-blue-gray-100 bg-blue-gray-50/50">
-                                    <p
-                                        class="block font-sans text-sm antialiased font-normal leading-none text-blue-gray-900 opacity-70">
-                                        two
-                                    </p>
-                                </th>
-                                <th class="p-4 border-y border-blue-gray-100 bg-blue-gray-50/50">
-                                    <p
-                                        class="block font-sans text-sm antialiased font-normal leading-none text-blue-gray-900 opacity-70">
-                                        Three
-                                    </p>
-                                </th>
-                                <th class="p-4 border-y border-blue-gray-100 bg-blue-gray-50/50">
-                                    <p
-                                        class="block font-sans text-sm antialiased font-normal leading-none text-blue-gray-900 opacity-70">
-                                        four
-                                    </p>
-                                </th>
-                                <th class="p-4 border-y border-blue-gray-100 bg-blue-gray-50/50">
-                                    <p
-                                        class="block font-sans text-sm antialiased font-normal leading-none text-blue-gray-900 opacity-70">
-                                        Five
-                                    </p>
-                                </th>
-                                <th class="p-4 border-y border-blue-gray-100 bg-blue-gray-50/50">
-                                    <p
-                                        class="block font-sans text-sm antialiased font-normal leading-none text-blue-gray-900 opacity-70">
-                                        Five
-                                    </p>
-                                </th>
-
-
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {product
-                                .filter((obj) => obj.title.toLowerCase().includes(searchkey || ''))
-                                .filter((obj) => obj.category.toLowerCase().includes(filterType || ''))
-                                .slice(0, 8)
-                                .map((item, index) => {
-                                    const { imageUrl, category, album, title, price, id, time, bpm } = item;
-                                    return (
-                                        <tr key={index} style={{ backgroundColor: mode === 'dark' ? 'rgb(46 49 55)' : '' }}>
-                                            <td class="p-4 border-b border-blue-gray-50">
-                                                <div class="flex items-center gap-3">
-
-                                                    <img src={imageUrl}
-                                                        alt="John Michael"
-                                                        class="relative inline-block h-9 w-9 !rounded-full object-cover object-center" />
-                                                </div>
-                                            </td>
-                                            <td class="p-4 border-b border-blue-gray-50">
-                                                <div class="flex items-center gap-3">
-
-                                                    <div class="flex flex-col">
-                                                        <p
-                                                            class="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
-                                                            {title}
-                                                        </p>
-                                                        <p
-                                                            class="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900 opacity-70">
-                                                            {category}
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td class="p-4 border-b border-blue-gray-50">
-                                                <div class="flex items-center gap-3">
-
-                                                    <div class="flex flex-col">
-                                                        <p
-                                                            class="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
-                                                            {album}
-                                                        </p>
-
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td class="p-4 border-b border-blue-gray-50">
-                                                <div class="flex items-center gap-3">
-
-                                                    <div class="flex flex-col">
-                                                        <p
-                                                            class="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
-                                                            {bpm}
-                                                        </p>
-
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td class="p-4 border-b border-blue-gray-50">
-                                                <div class="flex items-center gap-3">
-
-                                                    <div class="flex flex-col">
-                                                        <p
-                                                            class="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
-                                                            {time}
-                                                        </p>
-
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td class="p-4 border-b border-blue-gray-50">
-                                                <div class="flex items-center gap-3">
-
-                                                    <div class="flex flex-col">
-                                                        <button
-                                                            onClick={() => addCart(item)}
-                                                            className="bg-pink-600 hover:bg-pink-700 text-white font-medium py-2 px-4 rounded-md"
-                                                        >
-                                                            Add To Cart
-                                                        </button>
-
-                                                    </div>
-                                                </div>
-                                            </td>
-
-
-
-
-
-                                        </tr>
-                                    );
-                                })}
-                        </tbody>
-                    </table> */}
-
-
-
-                    <div className="overflow-x-auto mx-4 my-6"> {/* Added margin here */}
-                        <table className="min-w-full bg-white border border-gray-300 shadow-lg rounded-lg"> {/* Added shadow and rounded corners */}
-                            <thead>
-                                <tr className="bg-gray-200 text-gray-600">
+                <Filter />
+                <div className="p-6 px-0">
+                    <div className="overflow-x-auto mx-4 my-6">
+                        <table className="min-w-full bg-white border border-gray-300 shadow-lg rounded-lg">
+                            <thead className="bg-gray-100 text-left text-gray-700 font-medium text-sm uppercase tracking-wider">
+                                <tr>
                                     <th className="p-4 border-b">#</th>
                                     <th className="p-4 border-b">Image</th>
                                     <th className="p-4 border-b">Title & Category</th>
@@ -197,21 +112,36 @@ function ProductCard() {
                             </thead>
                             <tbody>
                                 {product.map((item, index) => (
-                                    <tr key={item.id} className="hover:bg-gray-100">
-                                        <td className="p-4 border-b">{index + 1}</td>
+                                    <tr key={item.id} className={`hover:bg-gray-50 ${index % 2 === 0 ? 'bg-gray-50' : 'bg-white'}`}>
+                                        <td className="p-4 border-b text-gray-700 text-sm">{index + 1}</td>
                                         <td className="p-4 border-b">
-                                            <div onClick={() => { playmusic(item, index) }}>
-                                                <img src={item.imageUrl} alt={item.title} className="h-12 w-12 rounded" />
+                                            <div onClick={() => { console.log("pop"); playmusic(item, index) }} className="cursor-pointer hover:scale-105 transition-transform duration-200" >
+                                                <img src={item.imageUrl} alt={item.title} className="h-12 w-12 rounded shadow-lg" />
                                             </div>
                                         </td>
                                         <td className="p-4 border-b">
-                                            <div>{item.title}</div>
-                                            <div className="text-gray-500">{item.category}</div>
+                                            <div className="text-gray-800 font-medium">{item.title}</div>
+                                            <div className="text-gray-500 text-sm">{item.category}</div>
                                         </td>
-                                        <td className="p-4 border-b">{item.time}</td>
-                                        <td className="p-4 border-b">{item.bpm}</td>
+                                        <td className="p-4 border-b text-gray-700 text-sm">{item.time}</td>
+                                        <td className="p-4 border-b text-gray-700 text-sm">{item.bpm}</td>
                                         <td className="p-4 border-b">
-                                            <button className="bg-green-500 text-white px-4 py-1 rounded hover:bg-green-600 transition">
+                                            <select
+                                                className="w-full mb-2 p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                onChange={(e) => handleLicenseChange(item.id, e.target.selectedIndex)}
+                                                required
+                                            >
+                                                <option value="" disabled>Select License</option>
+                                                {filteredLicenses(item).map((license, licenseIndex) => (
+                                                    <option key={license.name} value={license.name}>
+                                                        {license.name} - ₹{license.price.toFixed(2)}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                            <button
+                                                className="w-full bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition ease-in-out duration-200"
+                                                onClick={() => addCart(item)}
+                                            >
                                                 Add to Cart
                                             </button>
                                         </td>
@@ -220,11 +150,8 @@ function ProductCard() {
                             </tbody>
                         </table>
                     </div>
-
-
                 </div>
             </div>
-
         </section>
     );
 }
