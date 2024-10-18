@@ -89,7 +89,7 @@ const Play = () => {
     };
 
     return (
-        <div className={`fixed bottom-0 left-0 w-full bg-gray-900 text-white shadow-lg ${playerActive ? 'block' : 'hidden'}`}>
+        <div className={`fixed bottom-0 left-0 w-full bg-gray-900 text-black shadow-lg ${playerActive ? 'block' : 'hidden'}`}>
             <div className="flex flex-col px-4 py-3">
                 <div className="relative w-full">
                     <input

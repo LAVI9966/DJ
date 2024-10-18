@@ -23,7 +23,7 @@ export default function Navbar() {
     }
 
     return (
-        <div className="bg-white sticky top-0 z-50">
+        <div className={`sticky top-0 z-50 transition-colors duration-300 ${mode === 'dark' ? 'black' : 'bg-white'}`}>
             {/* Mobile menu */}
             <Transition.Root show={open} as={Fragment}>
                 <Dialog as="div" className="relative z-40 lg:hidden" onClose={setOpen}>
@@ -50,11 +50,7 @@ export default function Navbar() {
                             leaveTo="-translate-x-full"
                         >
                             <Dialog.Panel
-                                className="relative flex w-full max-w-xs flex-col overflow-y-auto bg-white pb-12 shadow-xl"
-                                style={{
-                                    backgroundColor: mode === 'dark' ? 'rgb(40, 44, 52)' : '',
-                                    color: mode === 'dark' ? 'white' : '',
-                                }}
+                                className={`relative flex w-full max-w-xs flex-col overflow-y-auto bg-white pb-12 shadow-xl transition-colors duration-300 ${mode === 'dark' ? 'bg-gray-900 text-black' : 'text-gray-900'}`}
                             >
                                 <div className="flex px-4 pb-2 pt-28">
                                     <button
@@ -70,16 +66,14 @@ export default function Navbar() {
                                 <div className="space-y-6 border-t border-gray-200 px-4 py-6">
                                     <Link
                                         to="/allproducts"
-                                        className="text-sm font-medium"
-                                        style={{ color: mode === 'dark' ? 'white' : '' }}
+                                        className="text-sm font-medium hover:text-blue-500 transition duration-200"
                                     >
                                         All Products
                                     </Link>
                                     {user && (
                                         <Link
                                             to="/order"
-                                            className="-m-2 block p-2 font-medium"
-                                            style={{ color: mode === 'dark' ? 'white' : '' }}
+                                            className="-m-2 block p-2 font-medium hover:text-blue-500 transition duration-200"
                                         >
                                             Order
                                         </Link>
@@ -87,8 +81,7 @@ export default function Navbar() {
                                     {user?.user?.email === 'admin@gmail.com' && (
                                         <Link
                                             to="/dashboard"
-                                            className="-m-2 block p-2 font-medium"
-                                            style={{ color: mode === 'dark' ? 'white' : '' }}
+                                            className="-m-2 block p-2 font-medium hover:text-blue-500 transition duration-200"
                                         >
                                             Admin
                                         </Link>
@@ -97,8 +90,7 @@ export default function Navbar() {
                                         <Link
                                             to="/login"
                                             onClick={logout}
-                                            className="-m-2 block p-2 font-medium cursor-pointer"
-                                            style={{ color: mode === 'dark' ? 'white' : '' }}
+                                            className="-m-2 block p-2 font-medium cursor-pointer hover:text-blue-500 transition duration-200"
                                         >
                                             Logout
                                         </Link>
@@ -106,15 +98,13 @@ export default function Navbar() {
                                         <>
                                             <Link
                                                 to="/signup"
-                                                className="-m-2 block p-2 font-medium cursor-pointer"
-                                                style={{ color: mode === 'dark' ? 'white' : '' }}
+                                                className="-m-2 block p-2 font-medium cursor-pointer hover:text-blue-500 transition duration-200"
                                             >
                                                 Signup
                                             </Link>
                                             <Link
                                                 to="/login"
-                                                className="-m-2 block p-2 font-medium cursor-pointer"
-                                                style={{ color: mode === 'dark' ? 'white' : '' }}
+                                                className="-m-2 block p-2 font-medium cursor-pointer hover:text-blue-500 transition duration-200"
                                             >
                                                 Login
                                             </Link>
@@ -128,21 +118,16 @@ export default function Navbar() {
             </Transition.Root>
 
             {/* Desktop Navigation */}
-            <header className="relative bg-white">
+            <header className={`relative transition-colors duration-300 ${mode === 'dark' ? '' : 'bg-white'}`}>
                 <nav
                     aria-label="Top"
-                    className="bg-gray-100 px-4 sm:px-6 lg:px-8 shadow-xl"
-                    style={{
-                        backgroundColor: mode === 'dark' ? '#282c34' : '',
-                        color: mode === 'dark' ? 'white' : '',
-                    }}
+                    className={`bg-gray-100 px-4 sm:px-6 lg:px-8 shadow-xl transition-colors duration-300 ${mode === 'dark' ? 'bg-gray-800 text-white' : 'text-gray-900'}`}
                 >
                     <div className="flex h-16 items-center">
                         <button
                             type="button"
-                            className="rounded-md bg-white p-2 text-gray-400 lg:hidden"
+                            className="rounded-md bg-white p-2 text-gray-400 lg:hidden hover:bg-gray-200 transition duration-200"
                             onClick={() => setOpen(true)}
-                            style={{ backgroundColor: mode === 'dark' ? 'rgb(80 82 87)' : '' }}
                         >
                             <span className="sr-only">Open menu</span>
                             <svg
@@ -162,48 +147,48 @@ export default function Navbar() {
                         </button>
 
                         <div className="ml-4 flex lg:ml-0">
-                            <Link to="/" className="text-2xl font-bold px-2 py-1">
+                            <Link to="/" className="text-2xl font-bold px-2 py-1 hover:text-blue-500 transition duration-200">
                                 DURSH
                             </Link>
                         </div>
 
                         <div className="ml-auto flex items-center">
                             <div className="hidden lg:flex lg:space-x-6">
-                                <Link to="/allproducts" className="text-sm font-medium">
+                                <Link to="/allproducts" className="text-sm font-medium hover:text-blue-500 transition duration-200">
                                     All Products
                                 </Link>
                                 {user && (
-                                    <Link to="/order" className="text-sm font-medium">
+                                    <Link to="/order" className="text-sm font-medium hover:text-blue-500 transition duration-200">
                                         Order
                                     </Link>
                                 )}
                                 {user?.user?.email === 'admin@gmail.com' && (
-                                    <Link to="/dashboard" className="text-sm font-medium">
+                                    <Link to="/dashboard" className="text-sm font-medium hover:text-blue-500 transition duration-200">
                                         Admin
                                     </Link>
                                 )}
                                 {user ? (
-                                    <Link to="/login" onClick={logout} className="text-sm font-medium">
+                                    <Link to="/login" onClick={logout} className="text-sm font-medium hover:text-blue-500 transition duration-200">
                                         Logout
                                     </Link>
                                 ) : (
                                     <>
-                                        <Link to="/login" className="text-sm font-medium">
+                                        <Link to="/login" className="text-sm font-medium hover:text-blue-500 transition duration-200">
                                             Login
                                         </Link>
-                                        <Link to="/signup" className="text-sm font-medium">
+                                        <Link to="/signup" className="text-sm font-medium hover:text-blue-500 transition duration-200">
                                             Signup
                                         </Link>
                                     </>
                                 )}
                             </div>
 
-                            <button onClick={toggleMode} className="ml-6">
+                            <button onClick={toggleMode} className="ml-6 text-gray-600 hover:text-blue-500 transition duration-200">
                                 {mode === 'light' ? <FiSun size={30} /> : <BsFillCloudSunFill size={30} />}
                             </button>
 
                             {/* Cart Icon with Count */}
-                            <Link to="/cart" className="ml-4 p-2 relative">
+                            <Link to="/cart" className="ml-4 p-2 relative hover:text-blue-500 transition duration-200">
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
                                     fill="none"
@@ -215,7 +200,12 @@ export default function Navbar() {
                                     <path
                                         strokeLinecap="round"
                                         strokeLinejoin="round"
-                                        d="M2.25 3h1.386..."
+                                        d="M2.25 3h1.386l.547 2.633A1.5 1.5 0 004.708 7h13.31a1.5 1.5 0 001.475-1.034l.547-2.633H21.75"
+                                    />
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        d="M6.75 20.25h10.5a1.5 1.5 0 001.5-1.5V7.5H5.25v11.25a1.5 1.5 0 001.5 1.5z"
                                     />
                                 </svg>
                                 {cartCount > 0 && (

@@ -150,15 +150,15 @@ function Cart() {
 
     return (
         <Layout>
-            <div className={`min-h-screen pt-28 pb-16 transition-all ${mode === 'dark' ? 'bg-gray-900 text-white' : 'bg-gray-50 text-gray-900'}`}>
+            <div className={`min-h-screen pt-28 pb-16 transition-all ${mode === 'dark' ? 'black text-white' : 'bg-gray-50 text-gray-900'}`}>
                 <h1 className="text-4xl font-bold text-center mb-8">Your Cart</h1>
 
-                <div className="container mx-auto grid grid-cols-1 md:grid-cols-3 gap-10 px-6">
+                <div className="container  mx-auto grid grid-cols-1 md:grid-cols-3 gap-10 px-6">
                     {/* Cart Items Section */}
                     <div className="md:col-span-2 space-y-6">
                         {cartItems.length > 0 ? (
                             cartItems.map((item, index) => (
-                                <div key={index} className="flex items-center bg-white shadow-lg rounded-xl p-6 hover:shadow-xl transition-all">
+                                <div key={index} className={`flex items-center shadow-lg rounded-xl border ${mode === 'dark' ? 'border-white' : 'border-black'} p-6 hover:shadow-xl transition-all`}>
                                     <img src={item.imageUrl} alt={item.title} className="w-32 h-32 object-cover rounded-lg" />
                                     <div className="ml-6 flex-1">
                                         <h2 className="text-xl font-semibold">{item.title}</h2>
@@ -183,7 +183,7 @@ function Cart() {
                     </div>
 
                     {/* Order Summary Section */}
-                    <div className="bg-white shadow-lg rounded-xl p-6">
+                    <div className={`shadow-lg rounded-xl border p-6 ${mode === 'dark' ? 'border-white' : 'border-black'}`}>
                         <h2 className="text-2xl font-bold mb-4">Order Summary</h2>
                         <div className="space-y-4">
                             <div className="flex justify-between">
@@ -202,11 +202,11 @@ function Cart() {
                         </div>
 
                         {/* Input Fields for Checkout */}
-                        <div className="mt-6 space-y-4">
-                            <input type="text" placeholder="Name" value={name} onChange={(e) => setName(e.target.value)} className="w-full px-4 py-2 border rounded" />
-                            <input type="text" placeholder="Address" value={address} onChange={(e) => setAddress(e.target.value)} className="w-full px-4 py-2 border rounded" />
-                            <input type="text" placeholder="Pincode" value={pincode} onChange={(e) => setPincode(e.target.value)} className="w-full px-4 py-2 border rounded" />
-                            <input type="text" placeholder="Phone Number" value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} className="w-full px-4 py-2 border rounded" />
+                        <div className="mt-6 space-y-4 ">
+                            <input type="text" placeholder="Name" value={name} onChange={(e) => setName(e.target.value)} className={`w-full px-4 py-2 border ${mode === 'dark' ? ' text-black' : ''} rounded`} />
+                            <input type="text" placeholder="Address" value={address} onChange={(e) => setAddress(e.target.value)} className={`w-full px-4 py-2 border ${mode === 'dark' ? ' text-black' : ''} rounded`} />
+                            <input type="text" placeholder="Pincode" value={pincode} onChange={(e) => setPincode(e.target.value)} className={`w-full px-4 py-2 border ${mode === 'dark' ? ' text-black' : ''} rounded`} />
+                            <input type="text" placeholder="Phone Number" value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} className={`w-full px-4 py-2 border ${mode === 'dark' ? ' text-black' : ''} rounded`} />
                             <button onClick={buyNow} className="w-full bg-green-500 text-white py-2 rounded mt-4">Buy Now</button>
                         </div>
                     </div>

@@ -6,7 +6,7 @@ const Player = () => {
     const { isPlaying, togglePlayPause } = usePlayer();
 
     return (
-        <div className="fixed bottom-0 left-0 w-full bg-gray-900 text-white shadow-lg">
+        <div className="fixed bottom-0 left-0 w-full bg-gray-900 text-black shadow-lg">
             <div className="flex items-center space-x-4 mt-2">
                 {/* Play/Pause Button */}
                 <button

@@ -59,7 +59,7 @@ function DashboardTab() {
                                     <button
 
                                         type="button"
-                                        className="focus:outline-none text-white bg-pink-600 shadow-[inset_0_0_10px_rgba(0,0,0,0.6)] border hover:bg-pink-700 outline-0 font-medium rounded-lg text-sm px-5 py-2.5 mb-2" style={{ backgroundColor: mode === 'dark' ? 'rgb(46 49 55)' : '', color: mode === 'dark' ? 'white' : '', }} > <div className="flex gap-2 items-center">
+                                        className="focus:outline-none text-white bg-pink-600 shadow-[inset_0_0_10px_rgba(0,0,0,0.6)] border hover:bg-pink-700 outline-0 font-medium rounded-lg text-sm px-5 py-2.5 mb-2" style={{ backgroundColor: mode === 'dark' ? 'black' : '', color: mode === 'dark' ? 'white' : '', }} > <div className="flex gap-2 items-center">
                                             <Link to={'/addproduct'}>
 
                                                 Add Product <FaCartPlus size={20} />
@@ -68,7 +68,7 @@ function DashboardTab() {
                                 </div>
                                 <div className="relative overflow-x-auto ">
                                     <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400  ">
-                                        <thead className="text-xs border border-gray-600 text-black uppercase bg-gray-200 shadow-[inset_0_0_8px_rgba(0,0,0,0.6)]" style={{ backgroundColor: mode === 'dark' ? 'rgb(46 49 55)' : '', color: mode === 'dark' ? 'white' : '', }} >
+                                        <thead className="text-xs border border-gray-600 text-black uppercase bg-gray-200 shadow-[inset_0_0_8px_rgba(0,0,0,0.6)]" style={{ backgroundColor: mode === 'dark' ? 'black' : '', color: mode === 'dark' ? 'white' : '', }} >
                                             <tr>
                                                 <th scope="col" className="px-6 py-3">
                                                     S.No
@@ -96,7 +96,7 @@ function DashboardTab() {
                                         {product.map((item, index) => {
                                             const { title, price, imageUrl, category, description } = item;
                                             return <tbody className=''>
-                                                <tr className="bg-gray-50 border-b  dark:border-gray-700" style={{ backgroundColor: mode === 'dark' ? 'rgb(46 49 55)' : '', color: mode === 'dark' ? 'white' : '', }} >
+                                                <tr className="bg-gray-50 border-b  dark:border-gray-700" style={{ backgroundColor: mode === 'dark' ? 'black' : '', color: mode === 'dark' ? 'white' : '', }} >
                                                     <td className="px-6 py-4 text-black " style={{ color: mode === 'dark' ? 'white' : '' }}>
                                                         {index + 1}
                                                     </td>
@@ -150,7 +150,7 @@ function DashboardTab() {
 
                                 {order.map((allorder, index) => {
                                     return <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400" >
-                                        <thead className="text-xs text-black uppercase bg-gray-200 " style={{ backgroundColor: mode === 'dark' ? 'rgb(46 49 55)' : '', color: mode === 'dark' ? 'white' : '', }} >
+                                        <thead className="text-xs text-black uppercase bg-gray-200 " style={{ backgroundColor: mode === 'dark' ? 'black' : '', color: mode === 'dark' ? 'white' : '', }} >
                                             <tr>
                                                 <th scope="col" className="px-6 py-3">
                                                     Payment Id
@@ -192,7 +192,7 @@ function DashboardTab() {
                                             const { title, description, category, imageUrl, price } = item;
                                             return <tbody>
 
-                                                <tr className="bg-gray-50 border-b  dark:border-gray-700" style={{ backgroundColor: mode === 'dark' ? 'rgb(46 49 55)' : '', color: mode === 'dark' ? 'white' : '', }} >
+                                                <tr className="bg-gray-50 border-b  dark:border-gray-700" style={{ backgroundColor: mode === 'dark' ? 'black' : '', color: mode === 'dark' ? 'white' : '', }} >
                                                     <td className="px-6 py-4 text-black " style={{ color: mode === 'dark' ? 'white' : '' }}>
                                                         {allorder.paymentId}
                                                     </td>
@@ -244,7 +244,7 @@ function DashboardTab() {
                             <div className="relative overflow-x-auto mb-10">
                                 <h1 className=' text-center mb-5 text-3xl font-semibold underline' style={{ color: mode === 'dark' ? 'white' : '' }}>User Details</h1>
                                 <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-                                    <thead className="text-xs text-black uppercase bg-gray-200 " style={{ backgroundColor: mode === 'dark' ? 'rgb(46 49 55)' : '', color: mode === 'dark' ? 'white' : '', }} >
+                                    <thead className="text-xs text-black uppercase bg-gray-200 " style={{ backgroundColor: mode === 'dark' ? 'black' : '', color: mode === 'dark' ? 'white' : '', }} >
                                         <tr>
                                             <th scope="col" className="px-6 py-3">
                                                 S.No
@@ -274,7 +274,7 @@ function DashboardTab() {
                                         const { name, phoneNumber, pincode, address, uid, email, date } = item;
                                         return <tbody>
 
-                                            <tr className="bg-gray-50 border-b  dark:border-gray-700" style={{ backgroundColor: mode === 'dark' ? 'rgb(46 49 55)' : '', color: mode === 'dark' ? 'white' : '', }} >
+                                            <tr className="bg-gray-50 border-b  dark:border-gray-700" style={{ backgroundColor: mode === 'dark' ? 'black' : '', color: mode === 'dark' ? 'white' : '', }} >
                                                 <td className="px-6 py-4 text-black " style={{ color: mode === 'dark' ? 'white' : '' }}>
                                                     {index + 1}.
                                                 </td>

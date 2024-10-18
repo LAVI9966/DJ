@@ -15,7 +15,7 @@ const MyStates = ({ children }) => {
     const toggleMode = () => {
         if (mode == 'Light') {
             setMode('dark');
-            document.body.style.backgroundColor = "rgb(17,24,39)"
+            document.body.style.backgroundColor = "black"
         } else {
             setMode('Light');
             document.body.style.backgroundColor = "white"
