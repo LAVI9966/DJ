@@ -91,6 +91,7 @@ function AddProduct() {
             // Store metadata in Firestore
             await addMusicTrack(track);
 
+
             // Clear the form
             setMp3File(null);
             setWavFile(null);
