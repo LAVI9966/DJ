@@ -3,7 +3,7 @@ import nodemailer from "nodemailer";
 import cors from "cors";
 const app = express();
 app.use(express.json());
-app.use(cors())
+app.use(cors({ origin: 'http://localhost:5173' }))
 
 const transporter = nodemailer.createTransport({
     secure: true,
@@ -29,7 +29,9 @@ const sendEmail = async (to, subject, text, html) => {
         console.log("eror", error)
     }
 }
-
+app.get('/', (req, res) => {
+    return res.send("hello world")
+})
 app.post('/send_email', async (req, res) => {
     const { to, subject, text, html } = req.body;
     console.log("pop")

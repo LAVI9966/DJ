@@ -5,7 +5,7 @@ import { addToCart } from '../../redux/cartSlice';
 import { toast } from 'react-toastify';
 import { usePlayer } from '../../context/player/playerContext';
 import Filter from '../Filter/Filter';
-import { fireDB } from '../../../../durgesh backup/DurgeshBhai/src/firebase/firebaseconfig';
+import { fireDB } from '../../firebase/firebaseconfig';
 import { collection, query, where, getDocs } from 'firebase/firestore';
 
 function ProductCard() {
