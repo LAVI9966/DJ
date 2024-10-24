@@ -13,20 +13,18 @@ function Allproducts() {
     const fetchUserPurchases = async (userId) => {
         const purchases = [];
         const q = query(collection(fireDB, 'purchases'), where('userId', '==', userId));
-
         const querySnapshot = await getDocs(q);
         querySnapshot.forEach((doc) => {
             const data = doc.data();
             purchases.push(...data.licenses);
         });
-
         return purchases;
     };
 
     const { loadTrack } = usePlayer();
     const context = useContext(myContext);
-    const { mode, product, searchkey, filterType } = context;
-
+    const { mode, product, searchkey, sliderlowervalue, setsliderlowervalue,
+        slideruppervalue, setslideruppervalue, filterType, keyFilter, setKeyFilter, setFilterType } = context; // Add setKeyFilter and setFilterType here
     const dispatch = useDispatch();
     const cartItems = useSelector((state) => state.cart);
 
@@ -35,16 +33,16 @@ function Allproducts() {
 
     useEffect(() => {
         const getUserPurchases = async () => {
-            const purchases = await fetchUserPurchases();
+            const purchases = await fetchUserPurchases(); // Pass userId if required
             setUserPurchasedLicenses(purchases);
         };
         getUserPurchases();
     }, []);
 
-    const handleLicenseChange = (productId, index) => {
-        setSelectedLicenses(prevState => ({
+    const handleLicenseChange = (productId, licenseId) => {
+        setSelectedLicenses((prevState) => ({
             ...prevState,
-            [productId]: index,
+            [productId]: licenseId,
         }));
     };
 
@@ -53,19 +51,28 @@ function Allproducts() {
     }, [cartItems]);
 
     const playmusic = async (item, index) => {
-        loadTrack(item.fileUrl, product, index);
+        loadTrack(item.mp3File.url, product, index);
     };
 
     const addCart = (product) => {
-        const licenseIndex = selectedLicenses[product.id] ?? 0;
-        const selectedLicense = product.licenses[licenseIndex];
+        const selectedLicenseId = selectedLicenses[product._id];
 
-        if (userPurchasedLicenses.includes(selectedLicense.name)) {
+        if (!selectedLicenseId) {
+            return toast.error('Please select a valid license.');
+        }
+
+        const selectedLicense = product.licenses.find((license) => license._id === selectedLicenseId);
+
+        if (!selectedLicense) {
+            return toast.error('Invalid license selection.');
+        }
+
+        if (userPurchasedLicenses.includes(selectedLicense._id)) {
             return toast.error(`You have already purchased the ${selectedLicense.name} license.`);
         }
 
         const alreadyInCart = cartItems.some(
-            (cartItem) => cartItem.id === product.id && cartItem.selectedLicense.name === selectedLicense.name
+            (cartItem) => cartItem._id === product._id && cartItem.selectedLicense._id === selectedLicense._id
         );
 
         if (alreadyInCart) {
@@ -82,14 +89,15 @@ function Allproducts() {
     };
 
     const filteredLicenses = (item) => {
-        return item.licenses.filter(license => !userPurchasedLicenses.includes(license.name));
+        return item.licenses.filter(license => !userPurchasedLicenses.includes(license._id));
     };
 
+    // Filter products by search and filter criteria
     const filteredProducts = product.filter((item) => {
-        const matchesCategory = filterType ? item.category === filterType : true;
         const matchesSearch = item.title.toLowerCase().includes(searchkey.toLowerCase());
-
-        return matchesCategory && matchesSearch;
+        const matchesKey = !keyFilter || item.key === keyFilter; // Adjust this based on your key structure
+        const matchesGenre = !filterType || item.genre === filterType; // Assuming you have a genre field
+        return matchesSearch && matchesKey && matchesGenre && item.bpm >= sliderlowervalue && item.bpm <= slideruppervalue;
     });
 
     return (
@@ -103,7 +111,7 @@ function Allproducts() {
                         </h1>
                         <div className="h-1 w-20 bg-pink-600 rounded"></div>
                     </div>
-                    <Filter />
+                    <Filter setKeyFilter={setKeyFilter} setFilterType={setFilterType} />
                     <div className="p-6 px-0">
                         <div className="overflow-x-auto mx-4 my-6">
                             <table className={`min-w-full ${mode === 'dark' ? 'black text-white' : 'bg-gray-50 text-gray-900'} shadow-lg rounded-lg`}>
@@ -119,11 +127,11 @@ function Allproducts() {
                                 </thead>
                                 <tbody>
                                     {filteredProducts.map((item, index) => (
-                                        <tr key={item.id} className={`${mode === 'dark' ? 'black text-white' : index % 2 === 0 ? 'bg-gray-50' : 'bg-white'}`}>
+                                        <tr key={item._id} className={`${mode === 'dark' ? 'black text-white' : index % 2 === 0 ? 'bg-gray-50' : 'bg-white'}`}>
                                             <td className="p-4">{index + 1}</td>
                                             <td className="p-4">
                                                 <div onClick={() => { playmusic(item, index) }} className="cursor-pointer transition-transform duration-200">
-                                                    <img src={item.imageUrl} alt={item.title} className="h-12 w-12 rounded shadow-lg" />
+                                                    <img src={item.image.url} alt={item.title} className="h-12 w-12 rounded shadow-lg" />
                                                 </div>
                                             </td>
                                             <td className="p-4">
@@ -136,13 +144,13 @@ function Allproducts() {
                                                 <select
                                                     className={`w-full mb-2 p-2 rounded focus:outline-none focus:ring-2 transition ease-in-out duration-200
                                                     ${mode === 'dark' ? 'bg-gray-700 text-white border-gray-600 focus:ring-blue-500' : 'bg-white text-gray-900 border-gray-300 focus:ring-blue-500'}`}
-                                                    onChange={(e) => handleLicenseChange(item.id, e.target.selectedIndex)}
+                                                    onChange={(e) => handleLicenseChange(item._id, e.target.value)}
                                                     required
                                                 >
-                                                    <option value="" disabled>Select License</option>
-                                                    {filteredLicenses(item).map((license, licenseIndex) => (
-                                                        <option key={license.name} value={license.name}>
-                                                            {license.name} - ₹{license.price.toFixed(2)}
+                                                    <option value="">Select License</option>
+                                                    {filteredLicenses(item).map((license) => (
+                                                        <option key={license._id} value={license._id}>
+                                                            {license.name} - ₹{license.price} (ID: {license._id})
                                                         </option>
                                                     ))}
                                                 </select>

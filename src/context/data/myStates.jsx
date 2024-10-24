@@ -9,6 +9,7 @@ import {
 } from 'firebase/firestore';
 import { fireDB } from '../../firebase/firebaseconfig';
 import { toast } from 'react-toastify';
+import axios from 'axios';
 
 const MyStates = ({ children }) => {
     const [mode, setMode] = useState('Light');
@@ -75,22 +76,27 @@ const MyStates = ({ children }) => {
     const getProductData = async () => {
         setLoading(true);
         try {
-            const q = query(
-                collection(fireDB, 'products'),
-                orderBy('time')
-            );
-            const data = onSnapshot(q, (QuerySnapshot) => {
-                let productArray = [];
-                QuerySnapshot.forEach((doc) => {
-                    productArray.push({ ...doc.data(), id: doc.id });
-                });
-                console.log("me getproduct function ka data hu", productArray)
-                console.log("me hu gian ", product)
-                setproduct(productArray);
-                setLoading(false);
+            // const q = query(
+            //     collection(fireDB, 'products'),
+            //     orderBy('time')
+            // );
+            // const data = onSnapshot(q, (QuerySnapshot) => {
+            //     let productArray = [];
+            //     QuerySnapshot.forEach((doc) => {
+            //         productArray.push({ ...doc.data(), id: doc.id });
+            //     });
+            //     console.log("me getproduct function ka data hu", productArray)
+            //     console.log("me hu gian ", product)
+            //     setproduct(productArray);
+            //     setLoading(false);
 
-            })
-            return () => data;
+            // })
+            // return () => data;
+            console.log("hello")
+            const response = await axios.get('http://localhost:3000/fetchallsongs');
+            setproduct(response.data);
+            setLoading(false);
+            console.log("stste se product", response.data);
         } catch (error) {
             console.log(error)
             setLoading(false);
@@ -132,9 +138,6 @@ const MyStates = ({ children }) => {
     const deleteProduct = async (item) => {
         setLoading(true)
         try {
-
-            await deleteDoc(doc(fireDB, 'products', item.id));
-            toast.success('Product Deleted Successfully')
             getProductData();
             setLoading(false)
         } catch (error) {
@@ -148,20 +151,19 @@ const MyStates = ({ children }) => {
     const getOrderData = async () => {
         setLoading(true);
         try {
-            const result = await getDocs(collection(fireDB, 'order'))
-            const orderArray = [];
-            result.forEach((doc) => {
-                orderArray.push(doc.data());
-                setLoading(false);
-            })
-            console.log("hui hui pui", orderArray);
-            setOrder(orderArray);
-            setLoading(false);
+            // Fetch orders from your MongoDB API endpoint
+            const response = await axios.get('http://localhost:3000/allorders'); // Update with your actual API URL
+            const orderArray = response.data; // Assuming the response contains the orders in the data field
+
+            console.log("Fetched orders:", orderArray);
+            setOrder(orderArray); // Update the state with the fetched orders
         } catch (error) {
-            console.log(error);
-            setLoading(false);
+            console.log("Error fetching orders:", error);
+        } finally {
+            setLoading(false); // Ensure loading is set to false in both success and error cases
         }
-    }
+    };
+
 
     const [user, setUser] = useState([])
     const getUserData = async () => {
@@ -189,7 +191,10 @@ const MyStates = ({ children }) => {
 
     const [searchkey, setsearchkey] = useState('');
     const [filterType, setFilterType] = useState('');
+    const [keyFilter, setKeyFilter] = useState('');
     const [filterPrice, setFilterPrice] = useState('');
+    const [sliderlowervalue, setsliderlowervalue] = useState(40);
+    const [slideruppervalue, setslideruppervalue] = useState(200);
 
     return (
         <MyContext.Provider value={{
@@ -200,8 +205,11 @@ const MyStates = ({ children }) => {
             products,
             setproducts,
             product,
-            addProduct,
+            addProduct, getProductData,
             edithandle,
+            keyFilter, setKeyFilter,
+            sliderlowervalue, setsliderlowervalue,
+            slideruppervalue, setslideruppervalue,
             updateProductFun,
             deleteProduct,
             order, user, searchkey, setsearchkey,

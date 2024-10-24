@@ -10,13 +10,20 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@emotion/react": "^11.13.3",
+    "@emotion/styled": "^11.13.0",
     "@fortawesome/free-solid-svg-icons": "^6.6.0",
     "@fortawesome/react-fontawesome": "^0.2.2",
     "@headlessui/react": "^2.1.9",
     "@heroicons/react": "^2.1.5",
+    "@mui/material": "^6.1.5",
     "@react-pdf/renderer": "^4.0.0",
     "@reduxjs/toolkit": "^2.2.7",
+    "axios": "^1.7.7",
+    "cloudinary": "^2.5.1",
     "firebase": "^10.14.1",
+    "gapi-script": "^1.2.0",
+    "googleapis": "^144.0.0",
     "html2pdf.js": "^0.10.2",
     "jspdf": "^2.5.2",
     "pdf-lib": "^1.17.1",
@@ -30,7 +37,8 @@
     "react-signature-canvas": "^1.0.6",
     "react-tabs": "^6.0.2",
     "react-toastify": "^10.0.5",
-    "react-wavify": "^1.11.1"
+    "react-wavify": "^1.11.1",
+    "three": "^0.169.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.11.1",

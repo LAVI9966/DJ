@@ -5,7 +5,8 @@ import { MdOutlineProductionQuantityLimits } from 'react-icons/md';
 import { FaUser, FaCartPlus } from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom'
 import { AiFillShopping, AiFillPlusCircle, AiFillDelete } from 'react-icons/ai';
-
+import { toast } from 'react-toastify';
+import axios from 'axios';
 function DashboardTab() {
     const navigation = useNavigate();
     const context = useContext(MyContext)
@@ -13,7 +14,25 @@ function DashboardTab() {
         updateProduct,
         deleteProduct, order, user } = context;
 
-    console.log("hui ", product)
+    // console.log("hui ", product)
+
+    const deletetrack = async (item) => {
+        try {
+            console.log("me yaha agya", item);
+            // await deleteDoc(doc(fireDB, 'products', item.id));
+            const response = await axios.delete('http://localhost:3000/deletefile', {
+                data: {
+                    item: item
+                }
+            });
+            console.log("ye sesponse he", response);
+            toast.success('Product Deleted Successfully')
+            deleteProduct();
+        } catch (error) {
+            console.log(error);
+
+        }
+    }
     let [isOpen, setIsOpen] = useState(false)
 
     function closeModal() {
@@ -83,7 +102,7 @@ function DashboardTab() {
                                                     Price
                                                 </th>
                                                 <th scope="col" className="px-6 py-3">
-                                                    Category
+                                                    Genre
                                                 </th>
                                                 <th scope="col" className="px-6 py-3">
                                                     Date
@@ -94,23 +113,34 @@ function DashboardTab() {
                                             </tr>
                                         </thead>
                                         {product.map((item, index) => {
-                                            const { title, price, imageUrl, category, description } = item;
+                                            const { title, licenses, image, genre, description } = item;
                                             return <tbody className=''>
                                                 <tr className="bg-gray-50 border-b  dark:border-gray-700" style={{ backgroundColor: mode === 'dark' ? 'black' : '', color: mode === 'dark' ? 'white' : '', }} >
                                                     <td className="px-6 py-4 text-black " style={{ color: mode === 'dark' ? 'white' : '' }}>
                                                         {index + 1}
                                                     </td>
                                                     <th scope="row" className="px-6 py-4 font-medium text-black whitespace-nowrap">
-                                                        <img className='w-16' src={imageUrl} alt="img" />
+                                                        <img className='w-16' src={image.url} alt="img" />
                                                     </th>
                                                     <td className="px-6 py-4 text-black " style={{ color: mode === 'dark' ? 'white' : '' }}>
                                                         {title}
                                                     </td>
                                                     <td className="px-6 py-4 text-black " style={{ color: mode === 'dark' ? 'white' : '' }}>
-                                                        ₹{price}
+                                                        {licenses.map((item) => {
+                                                            return <>
+                                                                <div className='flex'>
+                                                                    <b><p>{`${item.name} : `}</p>
+                                                                    </b>
+                                                                    <b>
+
+                                                                        <p> {` ${item.price}`}</p>
+                                                                    </b>
+                                                                </div>
+                                                            </>
+                                                        })}
                                                     </td>
                                                     <td className="px-6 py-4 text-black " style={{ color: mode === 'dark' ? 'white' : '' }}>
-                                                        {category}
+                                                        {genre}
                                                     </td>
                                                     <td className="px-6 py-4 text-black " style={{ color: mode === 'dark' ? 'white' : '' }}>
                                                         12 Aug 2019
@@ -118,7 +148,7 @@ function DashboardTab() {
                                                     <td className="px-6 py-4">
                                                         <div className=" flex gap-2">
                                                             <div className=" flex gap-2 cursor-pointer text-black " style={{ color: mode === 'dark' ? 'white' : '' }}>
-                                                                <div onClick={() => { deleteProduct(item) }}>
+                                                                <div onClick={() => { deletetrack(item) }}>
                                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
                                                                         <path strokeLinecap="round" strokeLinejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
                                                                     </svg>
@@ -188,7 +218,7 @@ function DashboardTab() {
                                             </tr>
                                         </thead>
                                         {allorder.cartItems.map((item, index) => {
-                                            console.log(item)
+                                            {/* console.log(item) */ }
                                             const { title, description, category, imageUrl, price } = item;
                                             return <tbody>
 
