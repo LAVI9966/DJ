@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { PDFDownloadLink, Document, Line, Image, Page, Text, View, StyleSheet, pdf } from '@react-pdf/renderer';
-
+import axios from 'axios';
+import { doc, getDoc } from 'firebase/firestore';
+import { fireDB } from "../../firebase/firebaseconfig"
 const styles = StyleSheet.create({
     page: {
         padding: 40,
@@ -9,15 +11,15 @@ const styles = StyleSheet.create({
         lineHeight: 1.5,
     },
     title: {
-        fontSize: 20,
-        marginBottom: 20,
-        textAlign: 'center',
-        fontWeight: 'bold',
+        fontSize: 15,
+        marginBottom: 0,
+        textAlign: 'left',
+        fontWeight: '900',
     },
     sectionTitle: {
         fontSize: 13,
-        marginBottom: 5,
-        fontWeight: 'bold',
+        marginBottom: 2,
+        fontWeight: '900',
     },
     section: {
         marginBottom: 15,
@@ -33,18 +35,19 @@ const styles = StyleSheet.create({
         color: 'black',
     },
     line: {
-        marginVertical: 10,
+        marginBottom: 5,
         height: 1,
         backgroundColor: 'black',
     },
-});
+})
+
 const LicenseDocument = () => (
     <Document>
         <Page size="A4" style={styles.page}>
             <Text style={styles.title}>DURSH: Premium License</Text>
             <View style={styles.section}>
                 <Text style={styles.sectionTitle}>License Agreement</Text>
-                <Line />
+                <View style={styles.line} />
 
                 <Text style={styles.text}>
                     THIS LICENCE AGREEMENT is made on "DAY DATE YEAR" ("Effective Date") by and between "LEGAL NAME", professionally known as "STAGE NAME" and living at "ADDRESS", "COUNTRY" (hereinafter referred to as the "Licensee") and Durgesh Gurjar, professionally known as DURSH and living at 97/A, Pandit Dindayal Upadhyay Nagar, Sukhliya, Indore, India (hereinafter referred to as the "Licensor").
@@ -116,8 +119,8 @@ const LicenseDocument = () => (
                 <Text style={styles.sectionTitle}>Restrictions</Text>
                 <Text style={styles.text}>
                     The rights granted to Licensee are NON-TRANSFERABLE and that Licensee may not transfer or assign any of its rights hereunder to any third-party. This restriction includes, but is not limited to, use of the Composition and/or Master Recording in television, commercials, film/movies, theatrical works, video games, and in any other form on the Internet which is not expressly permitted herein. Licensee shall not have the right to license or sublicense any use of the Composition or of the Master Recording, in whole or in part, for any so-called "samples".
-                    Licensee shall not engage in any unlawful copying, streaming, duplicating, selling, lending, renting, hiring, broadcasting, uploading, or downloading to any database, servers, computers, peer to peer sharing, or other file sharing services, posting on websites, or distribution of the Composition in the form, or a substantially similar form, as delivered to Licensee
-                    Licensee may send the Composition file to any individual musician, engineer, studio manager or other person who is working on the Master Recording
+                    Licensee shall not engage in any unlawful copying, streaming, duplicating, selling, lending, renting, hiring, broadcasting, uploading, or downloading to any database, servers, computers, peer to peer sharing, or other file sharing services, posting on websites, or distribution of the Composition in the form, or a substantially similar form, as delivered to Licensee.
+                    Licensee may send the Composition file to any individual musician, engineer, studio manager or other person who is working on the Master Recording.
 
                 </Text>
                 <Text style={styles.sectionTitle}>Ownership</Text>
@@ -137,12 +140,12 @@ const LicenseDocument = () => (
 
                 {/* <Image src="https://t.auntmia.com/nthumbs/2020-01-06/4887348/4887348_15.jpg" style={{ width: '100%', marginBottom: 10 }} /> */}
             </View>
-            <Text style={styles.footer}>This license is governed by the law of India.</Text>
         </Page>
     </Document>
 );
 
 const LicenseGenerator = () => {
+
     const handleSubmit = async () => {
         try {
             const pdfDoc = <LicenseDocument />;
@@ -196,7 +199,7 @@ const LicenseGenerator = () => {
 
             <button
                 onClick={handleSubmit}
-                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                className="bg-blue-500 hover:bg-blue-700 text-white font-900 py-2 px-4 rounded"
             >
                 Send Email with License
             </button>
