@@ -6,7 +6,16 @@ import axios from 'axios';
 import LicenseGenerator from './LicenseGenerator';
 
 function Order() {
-    const userid = JSON.parse(localStorage.getItem('user')).user.uid;
+    // const userid = JSON.parse(localStorage.getItem('user')).user.uid;
+    const userid = JSON.parse(localStorage.getItem('user'))
+    // const p = {
+    //     user: {
+    //         uid: userid.sub
+    //     },
+    //     userid: userid,
+    // }
+    // console.log("pppp", p)
+    console.log("user he ye bhai ", userid);
     const context = useContext(MyContext);
     const { mode, loading, order } = context;
     const [userOrders, setuserOrder] = useState([]);

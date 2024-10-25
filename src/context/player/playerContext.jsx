@@ -46,13 +46,13 @@ export const PlayerProvider = ({ children }) => {
         loadTrack(tracks[previousIndex].fileUrl, tracks, previousIndex);
     };
 
-    useEffect(() => {
-        // Cleanup to pause audio and clear source on component unmount
-        return () => {
-            audioRef.current.pause();
-            audioRef.current.src = ''; // Clear source to avoid memory leaks
-        };
-    }, []);
+    // useEffect(() => {
+    //     // Cleanup to pause audio and clear source on component unmount
+    //     return () => {
+    //         audioRef.current?.pause();
+    //         audioRef.current.src = ''; // Clear source to avoid memory leaks
+    //     };
+    // }, []);
 
     return (
         <PlayerContext.Provider value={{ loadTrack, togglePlayPause, playNext, playPrevious, isPlaying, audioUrl, curritem }}>

@@ -108,7 +108,6 @@ function ProductCard() {
             (license) => !userPurchasedLicenses.includes(license._id)
         );
     };
-    console.log("products ", product)
     // Filter products by search and filter criteria
     const filteredProducts = product.filter((item) => {
         const matchesSearch = item.title.toLowerCase().includes(searchkey.toLowerCase());
