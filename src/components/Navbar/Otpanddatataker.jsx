@@ -1,20 +1,41 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import OTPVerification from "./OTPVerification";
 import axios from "axios";
 import { useAuth0 } from "@auth0/auth0-react";
-
+import { Input } from "../ui/input"
+import { Button } from "../ui/button"
+import TypingAnimation from "../ui/typing-animation";
 const MultiStepForm = ({ closePopup }) => {
     const [currentStep, setCurrentStep] = useState(1);
     const [formData, setFormData] = useState({
         legalName: "",
         artistName: "",
         streetAddress: "",
+        pincode: "",
         state: "",
         country: "",
-        mobileNo: "",
+        phoneNumber: "",
     });
-    const { user } = useAuth0();
+    const { user, isLoading } = useAuth0();
     const [verified, setVerified] = useState(false);
+
+    const isGoogleLogin = user?.sub?.startsWith("google-oauth2");
+    const isEmailVerified = user?.email_verified;
+
+    useEffect(() => {
+        if (user) {
+            if (isGoogleLogin) {
+                if (isEmailVerified) {
+                    setVerified(true);
+                    setCurrentStep(2);
+                } else {
+                    alert("Your email is not verified. Please verify your email first.");
+                    closePopup(false);
+                }
+            }
+        }
+    }, [isGoogleLogin, isEmailVerified, closePopup]);
+
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData((prev) => ({ ...prev, [name]: value }));
@@ -22,150 +43,183 @@ const MultiStepForm = ({ closePopup }) => {
 
     const nextStep = () => {
         setCurrentStep(currentStep + 1);
-    }
+    };
+
     const prevStep = () => {
         setCurrentStep(currentStep - 1);
-    }
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (!user) return;
+
         const userData = {
             legalName: formData.legalName,
             artistName: formData.artistName,
             email: user.email,
             streetAddress: formData.streetAddress,
+            pincode: formData.pincode,
             state: formData.state,
             country: formData.country,
-            mobileNo: formData.mobileNo,
+            phoneNumber: formData.phoneNumber,
             uid: user.sub,
-            verified
-        }
+            verified,
+        };
+
         try {
-            const response = await axios.post('http://localhost:3000/adduser', { userData });
+            const response = await axios.post("http://localhost:3000/adduser", { userData });
             console.log("User registered:", response);
-            if (response.status == 201) {
-                const userData = {
+            if (response.status === 201) {
+                const storedUserData = {
                     user: {
                         uid: user.sub,
                         name: user.name,
                         email: user.email,
                         picture: user.picture,
+                    },
+                };
+
+                if (!localStorage.getItem("user")) {
+                    if (!isGoogleLogin) {
+                        // Assuming sendotp is defined elsewhere
+                        sendotp(user?.email);
                     }
-                }; if (!localStorage.getItem('user')) {
-                    sendotp(user?.email);
-                    setShowPopup(true);
+                    localStorage.setItem("user", JSON.stringify(storedUserData));
                 }
-                localStorage.setItem('user', JSON.stringify(userData));
+                closePopup(false);
             }
-            // Optionally, you can handle redirection or further steps here
-            closePopup(false)
         } catch (error) {
-            console.log("error", error);
+            console.error("Error:", error);
         }
     };
 
+    if (isLoading) {
+        return <div className="flex justify-center items-center h-full">Loading...</div>;
+    }
+
     return (
-        <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-lg overflow-hidden">
-            {currentStep === 1 ? (
+        <div className=" px-6 black text-white rounded-lg ">
+            <TypingAnimation
+                className="text-4xl py-4 font-bold text-black dark:text-white"
+                text="Contact Details"
+            />
+            {currentStep === 1 && !isGoogleLogin ? (
                 <OTPVerification nextStep={nextStep} setVerified={setVerified} />
             ) : (
-                <form onSubmit={handleSubmit} className="transition-transform duration-500">
-                    <h2 className="text-2xl font-bold mb-4">Step 2: Contact Details</h2>
-                    <label className="block mb-2">
-                        Legal Name:
-                        <input
-                            type="text"
-                            name="legalName"
-                            value={formData.legalName}
-                            onChange={handleChange}
-                            required
-                            className="w-full mt-1 p-2 border border-gray-300 rounded-md focus:ring focus:ring-blue-300"
-                        />
-                    </label>
-                    <label className="block mb-2">
-                        Artist Name:
-                        <input
-                            type="text"
-                            name="artistName"
-                            value={formData.artistName}
-                            onChange={handleChange}
-                            required
-                            className="w-full mt-1 p-2 border border-gray-300 rounded-md focus:ring focus:ring-blue-300"
-                        />
-                    </label>
-                    <label className="block mb-2">
-                        Street Address:
-                        <input
-                            type="text"
-                            name="streetAddress"
-                            value={formData.streetAddress}
-                            onChange={handleChange}
-                            required
-                            className="w-full mt-1 p-2 border border-gray-300 rounded-md focus:ring focus:ring-blue-300"
-                        />
-                    </label>
-                    <label className="block mb-2">
-                        State:
-                        <input
-                            type="text"
-                            name="state"
-                            value={formData.state}
-                            onChange={handleChange}
-                            required
-                            className="w-full mt-1 p-2 border border-gray-300 rounded-md focus:ring focus:ring-blue-300"
-                        />
-                    </label>
-                    <label className="block mb-2">
-                        Country:
-                        <input
-                            type="text"
-                            name="country"
-                            value={formData.country}
-                            onChange={handleChange}
-                            required
-                            className="w-full mt-1 p-2 border border-gray-300 rounded-md focus:ring focus:ring-blue-300"
-                        />
-                    </label>
-                    <label className="block mb-4">
-                        Mobile No:
-                        <input
-                            type="tel"
-                            name="mobileNo"
-                            value={formData.mobileNo}
-                            onChange={handleChange}
-                            required
-                            className="w-full mt-1 p-2 border border-gray-300 rounded-md focus:ring focus:ring-blue-300"
-                        />
-                    </label>
-                    <label className="block mb-4">
-                        Verified:
-                        <input
-                            type="checkbox"
-                            name="verified"
-                            checked={formData.verified}
-                            onChange={() => setFormData((prev) => ({ ...prev, verified: !prev.verified }))}
-                            className="ml-2"
-                        />
-                    </label>
-                    <div className="flex justify-between">
-                        <button
-                            type="button"
-                            onClick={prevStep}
-                            className="bg-gray-500 text-white py-2 px-4 rounded-md hover:bg-gray-600"
-                        >
-                            Previous
-                        </button>
-                        <button
-                            type="submit"
-                            className="bg-green-500 text-white py-2 px-4 rounded-md hover:bg-green-600"
-                        >
-                            Submit
-                        </button>
+                <form onSubmit={handleSubmit} >
+                    <div className="flex flex-row md:flex-row">
+                        <div>
+                            <div className="px-5">
+                                <label className="block mb-1 font-medium" htmlFor="legalName">Legal Name</label>
+                                <Input
+                                    type="text"
+                                    name="legalName"
+                                    placeholder="Legal Name"
+                                    value={formData.legalName}
+                                    onChange={handleChange}
+                                    required
+                                    className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-300 transition duration-150 ease-in-out"
+                                />
+                            </div>
+                            <div className="px-5">
+                                <label className="block mb-1 font-medium" htmlFor="artistName">Artist Name</label>
+                                <Input
+                                    type="text"
+                                    name="artistName"
+                                    placeholder="Artist Name"
+                                    value={formData.artistName}
+                                    onChange={handleChange}
+                                    required
+                                    className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-300 transition duration-150 ease-in-out"
+                                />
+                            </div>
+                            <div className="px-5">
+                                <label className="block mb-1 font-medium" htmlFor="streetAddress">Street Address</label>
+                                <Input
+                                    type="text"
+                                    name="streetAddress"
+                                    placeholder="Streat Address"
+                                    value={formData.streetAddress}
+                                    onChange={handleChange}
+                                    required
+                                    className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-300 transition duration-150 ease-in-out"
+                                />
+                            </div>
+                            <div className="px-5">
+                                <label className="block mb-1 font-medium" htmlFor="pincode">Pincode</label>
+                                <Input
+                                    placeholder="Pincode"
+                                    type="text"
+                                    name="pincode"
+
+                                    value={formData.pincode}
+                                    onChange={handleChange}
+                                    required
+                                    className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-300 transition duration-150 ease-in-out"
+                                />
+                            </div>
+                        </div>
+                        <div>
+                            <div className="px-5">
+                                <label className="block mb-1 font-medium" htmlFor="state">State</label>
+                                <Input
+                                    type="text"
+                                    name="state"
+                                    value={formData.state}
+                                    placeholder="State"
+                                    onChange={handleChange}
+                                    required
+                                    className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-300 transition duration-150 ease-in-out"
+                                />
+                            </div>
+                            <div className="px-5">
+                                <label className="block mb-1 font-medium" htmlFor="country">Country</label>
+                                <Input
+                                    type="text"
+                                    name="country"
+                                    value={formData.country}
+                                    placeholder="Country"
+                                    onChange={handleChange}
+                                    required
+                                    className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-300 transition duration-150 ease-in-out"
+                                />
+                            </div>
+                            <div className="px-5">
+                                <label className="block mb-1 font-medium" htmlFor="phoneNumber">Mobile No</label>
+                                <Input
+                                    type="text"
+                                    name="phoneNumber"
+                                    placeholder="Phone Number"
+                                    value={formData.phoneNumber}
+                                    onChange={handleChange}
+                                    required
+                                    className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-300 transition duration-150 ease-in-out"
+                                />
+                            </div>
+                            <div className="flex px-5 justify-between mt-4">
+                                {/* <button
+                                    type="button"
+                                    onClick={prevStep}
+                                    className="bg-gray-500 text-white py-2 px-4 rounded-md hover:bg-gray-600 transition duration-150"
+                                >
+                                    Previous
+                                </button> */}
+                                <Button
+                                    type="submit"
+
+                                >
+                                    Save
+                                </Button>
+                            </div>
+                        </div>
                     </div>
                 </form>
-            )}
+            )
+
+
+            }
         </div>
     );
 };
 
-export default MultiStepForm;
+export default MultiStepForm;                    

@@ -4,8 +4,9 @@ import Layout from '../../components/Layout/Layout';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
-import { deleteFromCart } from '../../redux/cartSlice';
+import { deleteFromCart, clearCart } from '../../redux/cartSlice';
 import axios from 'axios';
+import { useAuth0 } from '@auth0/auth0-react';
 
 function Cart() {
     const context = useContext(myContext);
@@ -14,61 +15,66 @@ function Cart() {
     const dispatch = useDispatch();
     const cartItems = useSelector((state) => state.cart);
     const SHIPPING_COST = 100;
+
     const [totalAmount, setTotalAmount] = useState(0);
     const [name, setName] = useState('');
-    const [address, setAddress] = useState('');
+    const [artistName, setArtistName] = useState('');
+    const [email, setEmail] = useState('');
+    const [phoneNumber, setphoneNumber] = useState('');
+    const [streetAddress, setStreetAddress] = useState('');
     const [pincode, setPincode] = useState('');
-    const [phoneNumber, setPhoneNumber] = useState('');
+    const [state, setState] = useState('');
+    const [country, setCountry] = useState('');
+
+    const { user } = useAuth0();
+    console.log(user);
+    const userid = JSON.parse(localStorage.getItem("user"));
+    useEffect(() => {
+        const getUser = async () => {
+            try {
+                const response = await axios.get('http://localhost:3000/getuser', { params: { email: userid.email } });
+                console.log("User data: ", response.data);
+                setArtistName(response.data.artistName);
+                setName(response.data.legalName);
+                setphoneNumber(response.data.phoneNumber);
+                setStreetAddress(response.data.streetAddress);
+                setPincode(response.data.pincode);
+                setState(response.data.state);
+                setCountry(response.data.country);
+            } catch (error) {
+                console.log("Error fetching user data: ", error);
+            }
+        };
+        getUser();
+    }, [user]);
 
     useEffect(() => {
         localStorage.setItem('cart', JSON.stringify(cartItems));
     }, [cartItems]);
 
     useEffect(() => {
-        // Calculate total based on selected licenses
-        const tempTotal = cartItems.reduce((acc, item) => {
-            const selectedLicensePrice = item.selectedLicense?.price || 0;
-            return acc + selectedLicensePrice;
-        }, 0);
+        const tempTotal = cartItems.reduce((acc, item) => acc + (item.selectedLicense?.price || 0), 0);
         setTotalAmount(tempTotal);
     }, [cartItems]);
 
     const grandTotal = SHIPPING_COST + totalAmount;
 
     const deleteCart = (item) => {
-
         dispatch(deleteFromCart({
             item_id: item._id, licence_id: item.selectedLicense._id
         }));
         toast.success('Item Deleted Successfully');
     };
 
-    // Razorpay payment handler and order storage in MongoDB using Mongoose
+    const handleClearCart = () => {
+        dispatch(clearCart());
+    };
     const buyNow = async () => {
-        if (!name || !address || !pincode || !phoneNumber) {
-            return toast.error("All fields are required", {
-                position: "top-center",
-                autoClose: 1000,
-                theme: "colored",
-            });
-        }
-
-        const addressInfo = {
-            name,
-            address,
-            pincode,
-            phoneNumber,
-            date: new Date().toLocaleString("en-US", {
-                month: "short",
-                day: "2-digit",
-                year: "numeric",
-            }),
-        };
-
         const getUserFromStorage = () => {
-            const storeuser = JSON.parse(localStorage.getItem("user"));
-            if (storeuser?.user) {
-                return { uid: storeuser.user.uid, email: storeuser.user.email };
+            const storedUser = JSON.parse(localStorage.getItem("user"));
+            console.log("hihhihihihiihi", storedUser)
+            if (storedUser) {
+                return { uid: storedUser.uid, email: storedUser.email };
             }
             return { uid: null, email: null };
         };
@@ -95,26 +101,40 @@ function Cart() {
                             licenseUrl: item.selectedLicense?.licenseUrl,
                         },
                     })),
-                    addressInfo,
+                    addressInfo: {
+                        name,
+                        artistName,
+                        email,
+                        phoneNumber: phoneNumber,
+                        streetAddress,
+                        pincode,
+                        state,
+                        country,
+                    },
                     email,
                     paymentId,
                     userid: uid,
                     totalAmount: grandTotal,
-                    date: new Date(),
+                    date: new Date().toLocaleString("en-US", {
+                        month: "short",
+                        day: "2-digit",
+                        year: "numeric",
+                    }),
                 };
 
                 try {
-                    // Save order data to MongoDB via API
+                    console.log("chuddakad", orderInfo)
                     const response = await axios.post('http://localhost:3000/orders', orderInfo);
 
                     if (response.status === 201) {
                         toast.success('Payment Successful');
+                        handleClearCart();
                         navigate('/order');
                     } else {
                         toast.error('Failed to store the order');
                     }
                 } catch (error) {
-                    console.error(error.message);
+                    console.error("Error storing order: ", error.message);
                     toast.error('Failed to store the order');
                 }
             },
@@ -127,6 +147,7 @@ function Cart() {
 
     return (
         <Layout>
+            {/* <AnimatedGridPatternDemo></AnimatedGridPatternDemo> */}
             <div className={`min-h-screen pt-28 pb-16 transition-all ${mode === 'dark' ? 'black text-white' : 'bg-gray-50 text-gray-900'}`}>
                 <h1 className="text-4xl font-bold text-center mb-8">Your Cart</h1>
 
@@ -139,9 +160,9 @@ function Cart() {
                                     <img src={item.image.url} alt={item.title} className="w-32 h-32 object-cover rounded-lg" />
                                     <div className="ml-6 flex-1">
                                         <h2 className="text-xl font-semibold">{item.title}</h2>
-                                        <div className='flex flex-row item-center space-x-2'>
+                                        <div className='flex flex-row items-center space-x-2'>
                                             <label className="text-lg font-bold">License: </label>
-                                            <p className="text-lg item-center">{item.selectedLicense.name}</p>
+                                            <p className="text-lg">{item.selectedLicense.name}</p>
                                         </div>
                                         <p className="text-lg font-bold mt-2">₹{item.selectedLicense?.price || 0}</p>
                                     </div>
@@ -175,15 +196,9 @@ function Cart() {
                                 <span>₹{grandTotal}</span>
                             </div>
                         </div>
-
-                        {/* Input Fields for Checkout */}
-                        <div className="mt-6 space-y-4">
-                            <input type="text" placeholder="Name" value={name} onChange={(e) => setName(e.target.value)} className={`w-full px-4 py-2 border ${mode === 'dark' ? ' text-black' : ''} rounded`} />
-                            <input type="text" placeholder="Address" value={address} onChange={(e) => setAddress(e.target.value)} className={`w-full px-4 py-2 border ${mode === 'dark' ? ' text-black' : ''} rounded`} />
-                            <input type="text" placeholder="Pincode" value={pincode} onChange={(e) => setPincode(e.target.value)} className={`w-full px-4 py-2 border ${mode === 'dark' ? ' text-black' : ''} rounded`} />
-                            <input type="text" placeholder="Phone Number" value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} className={`w-full px-4 py-2 border ${mode === 'dark' ? ' text-black' : ''} rounded`} />
-                            <button onClick={buyNow} className="w-full bg-green-500 text-white py-2 rounded mt-4">Buy Now</button>
-                        </div>
+                        <button onClick={buyNow} className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 transition">
+                            Proceed to Payment
+                        </button>
                     </div>
                 </div>
             </div>

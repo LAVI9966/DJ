@@ -23,6 +23,7 @@ import { ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css'
 import Allproducts from './pages/allproduct/Allproduct'
 import Player from './components/player/Player'
+import { AnimatedGridDemo } from './pages/cart/AnimatedGridPattern'
 
 
 function App() {

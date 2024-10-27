@@ -73,7 +73,7 @@ export default function OTPVerification({ nextStep, setVerified }) {
 
     return (
         <form onSubmit={handleSubmit} className="space-y-4">
-            <h1 className="text-2xl font-bold">Mobile Phone Verification</h1>
+            <h1 className="text-2xl font-bold">Verify Email and Continue</h1>
             <p className="text-slate-500">
                 Enter the 4-digit verification code sent to your phone.
             </p>

@@ -12,14 +12,16 @@ import { toast } from 'react-toastify';
 import axios from 'axios';
 
 const MyStates = ({ children }) => {
-    const [mode, setMode] = useState('Light');
+    const [mode, setMode] = useState('dark');
     const toggleMode = () => {
         if (mode == 'Light') {
             setMode('dark');
             document.body.style.backgroundColor = "black"
+            document.body.style.color = "white"
         } else {
             setMode('Light');
             document.body.style.backgroundColor = "white"
+            document.body.style.color = "white"
         }
     }
 

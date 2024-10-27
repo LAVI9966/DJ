@@ -10,6 +10,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 import { useState } from 'react'
 import { PDFDownloadLink, Document, Page, Text, View, StyleSheet } from "@react-pdf/renderer";
+import { MarqueeDemo } from '../../components/testimonials/Marquee.jsx'
 
 const Home = () => {
 
@@ -26,6 +27,7 @@ const Home = () => {
                 </Link>
             </div>
             <Track></Track>
+            <MarqueeDemo></MarqueeDemo>
             <Testimonial></Testimonial>
         </Layout>
     </>

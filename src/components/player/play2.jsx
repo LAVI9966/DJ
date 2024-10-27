@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { GrCaretNext, GrCaretPrevious, GrPlay, GrPause } from "react-icons/gr";
 import { FaVolumeUp, FaVolumeMute, FaRandom, FaUndoAlt } from "react-icons/fa"; // Icons for new controls
+import { RiForward10Fill, RiReplay10Fill, RiLoopLeftFill } from "react-icons/ri";
 import { usePlayer } from '../../context/player/playerContext';
+import { CiShoppingCart } from "react-icons/ci";
+import { MdFavoriteBorder } from "react-icons/md";
+import { FiShoppingCart } from "react-icons/fi";
+import { MdFavorite } from "react-icons/md";
 
 const Play = () => {
     const { playNext, playPrevious, curritem, isPlaying, togglePlayPause } = usePlayer();
@@ -12,6 +17,7 @@ const Play = () => {
     const [isShuffling, setIsShuffling] = useState(false); // Shuffle state
     const [isRepeating, setIsRepeating] = useState(false); // Repeat state
     const [playerActive, setPlayerActive] = useState(false);
+    const [showVolumeSlider, setShowVolumeSlider] = useState(false); // State to control volume slider visibility
 
     useEffect(() => {
         const audio = document.querySelector('audio');
@@ -88,9 +94,25 @@ const Play = () => {
         return `${minutes}:${seconds}`;
     };
 
+    const handleAddToFavorites = () => {
+        // Logic for adding to favorites (e.g., update context or state)
+        console.log('Added to favorites:', curritem.title);
+    };
+
+    const handleAddToCart = () => {
+        // Logic for adding to cart (e.g., update context or state)
+        console.log('Added to cart:', curritem.title);
+    };
+
+    const toggleVolumeSlider = () => {
+        setShowVolumeSlider(!showVolumeSlider); // Toggle volume slider visibility
+    };
+
     return (
-        <div className={`fixed bottom-0 left-0 w-full bg-gray-900 text-black shadow-lg ${playerActive ? 'block' : 'hidden'}`}>
-            <div className="flex flex-col px-4 py-3">
+
+        <div className={`fixed bottom-0 left-0 w-full bg-gray-900 text-white shadow-lg ${playerActive ? 'block' : 'hidden'}`}>
+
+            <div className="flex flex-col px-4 pb-3 pt-0">
                 <div className="relative w-full">
                     <input
                         type="range"
@@ -100,73 +122,89 @@ const Play = () => {
                         onChange={handleSeek}
                         className="w-full h-1 bg-gray-700 rounded-full cursor-pointer"
                     />
-                    <div
+                    {/* <div
                         className="absolute top-0 left-0 h-1 bg-green-500 rounded-full"
                         style={{ width: `${(currentTime / duration) * 100}%` }}
-                    />
+                    /> */}
                 </div>
 
                 <div className="flex items-center space-x-4 mt-3 flex-wrap">
                     <img
-                        src={curritem.imageUrl}
+                        src={curritem.image?.url}
                         alt="Song Cover"
                         className="w-16 h-16 rounded-lg"
                     />
                     <div className="ml-3">
                         <h3 className="font-bold">{curritem.title}</h3>
-                        <div className="text-sm">Age: {curritem.age} | Category: {curritem.category} | BPM: {curritem.bpm}</div>
+                        <div className="text-sm">Genre: {curritem.genre} | Key: {curritem.key} | BPM: {curritem.bpm}</div>
                     </div>
 
                     <div className="text-sm">
                         {formatTime(currentTime)} / {formatTime(duration)}
                     </div>
 
-                    {/* Skip Backward/Forward */}
-                    <button onClick={skipBackward} className="bg-gray-300 text-black px-2 py-1 rounded hover:bg-gray-400">-10s</button>
-                    <button onClick={skipForward} className="bg-gray-300 text-black px-2 py-1 rounded hover:bg-gray-400">+10s</button>
+                    <div className='flex'>
 
-                    {/* Play/Pause */}
-                    <button onClick={togglePlayPause} className="rounded-full w-10 h-10 flex items-center justify-center bg-gray-700 ring-2 ring-gray-600">
-                        {isPlaying ? (
-                            <GrPause className="w-6 h-6" />
-                        ) : (
-                            <GrPlay className="w-6 h-6" />
-                        )}
-                    </button>
+                        {/* Skip Backward/Forward */}
+                        <button onClick={skipBackward} className="text-white px-2 py-1 rounded"><RiReplay10Fill size={30} /></button>
 
+                        {/* Previous */}
+                        <button onClick={playPrevious} className="px-4 py-2 mx-2 rounded hover:bg-gray-400">
+                            <GrCaretPrevious size={22} />
+                        </button>
+                        {/* Play/Pause */}
+                        <button onClick={togglePlayPause} className="rounded-full w-10 h-10 flex items-center justify-center bg-white text-black">
+                            {isPlaying ? (
+                                <GrPause className="w-6 h-6" />
+                            ) : (
+                                <GrPlay className="w-6 h-6" />
+                            )}
+                        </button>
+                        {/* Next  */}
+                        <button onClick={playNext} className="px-4 py-2 mx-2 rounded hover:bg-gray-400">
+                            <GrCaretNext size={22} />
+                        </button>
+                        <button onClick={skipForward} className="text-white px-2 py-1 rounded"><RiForward10Fill size={30} /></button>
+                    </div>
                     {/* Volume Control */}
                     <div className="flex items-center space-x-2">
-                        <input
-                            type="range"
-                            min="0"
-                            max="1"
-                            step="0.01"
-                            value={volume}
-                            onChange={handleVolumeChange}
-                            className="w-16 h-1 bg-gray-700 rounded-full cursor-pointer"
-                        />
-                        <button onClick={toggleMute} className="text-white">
-                            {isMuted ? <FaVolumeMute /> : <FaVolumeUp />}
+                        <button onClick={toggleVolumeSlider} className="text-white">
+                            {isMuted ? <FaVolumeMute size={22} /> : <FaVolumeUp size={22} />}
                         </button>
+                        {showVolumeSlider && (
+                            <input
+                                type="range"
+                                min="0"
+                                max="1"
+                                step="0.01"
+                                value={volume}
+                                onChange={handleVolumeChange}
+                                className="w-16 h-1 bg-gray-700 rounded-full cursor-pointer"
+                            />
+                        )}
                     </div>
 
                     {/* Repeat Button */}
-                    <button onClick={toggleRepeat} className="bg-gray-300 text-black px-2 py-1 rounded hover:bg-gray-400">
-                        <FaUndoAlt className={isRepeating ? 'text-green-500' : 'text-black'} />
+                    <button onClick={toggleRepeat} className="text-white px-2 py-1 rounded ">
+                        <RiLoopLeftFill size={22} className={isRepeating ? 'text-green-500' : 'text-white'} />
                     </button>
 
-                    {/* Shuffle Button */}
+                    {/* Shuffle Button
                     <button onClick={toggleShuffle} className="bg-gray-300 text-black px-2 py-1 rounded hover:bg-gray-400">
                         <FaRandom className={isShuffling ? 'text-green-500' : 'text-black'} />
-                    </button>
+                    </button> */}
 
-                    {/* Previous/Next */}
-                    <button onClick={playPrevious} className="bg-gray-300 text-black px-4 py-2 mx-2 rounded hover:bg-gray-400">
-                        <GrCaretPrevious />
-                    </button>
-                    <button onClick={playNext} className="bg-gray-300 text-black px-4 py-2 mx-2 rounded hover:bg-gray-400">
-                        <GrCaretNext />
-                    </button>
+                    <div className='ml-auto flex space-x-2'>
+                        {/* Add to Favorites Button */}
+                        <button onClick={handleAddToFavorites} className=" text-white px-2 py-1 rounded">
+                            {true ? <MdFavorite size={23} className='text-red-500' /> : <MdFavoriteBorder size={22} />}
+                        </button>
+
+                        {/* Add to Cart Button */}
+                        <button onClick={handleAddToCart} className=" text-white px-2 py-1 rounded">
+                            <FiShoppingCart size={22} />
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

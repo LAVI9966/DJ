@@ -7,7 +7,8 @@ import { usePlayer } from '../../context/player/playerContext';
 import Filter from '../Filter/Filter';
 import { fireDB } from '../../firebase/firebaseconfig';
 import { collection, query, where, getDocs } from 'firebase/firestore';
-
+import { useAuth0 } from '@auth0/auth0-react';
+import axios from 'axios';
 function ProductCard() {
     const fetchUserPurchases = async (userId) => {
         const purchases = [];
@@ -19,6 +20,29 @@ function ProductCard() {
         });
         return purchases;
     };
+    const [AllcartItemsOfUser, setAllCartItemOfUser] = useState([]);
+    const { user, isLoading } = useAuth0();
+    const userid = JSON.parse(localStorage.getItem('user'));
+
+    useEffect(() => {
+        const getUser = async () => {
+            try {
+                const response = await axios.get('http://localhost:3000/fethcdoc', { params: { email: userid?.email } });
+                console.log("User data for license retrieval: ", response.data);
+                // setuserformail(response.data); // Update `userformail` state asynchronously
+
+                // Directly calculate `cartItemsArray` using `response.data`
+                const cartItemsArray = response.data.flatMap(item => item.cartItems || []);
+                setAllCartItemOfUser(cartItemsArray);
+                console.log("pappu", cartItemsArray); // This should now log the expected data
+            } catch (error) {
+                console.log("Error fetching user data: ", error);
+            }
+        };
+
+        getUser();
+    }, [user]);
+
 
     const { loadTrack } = usePlayer();
     const context = useContext(myContext);
@@ -63,6 +87,7 @@ function ProductCard() {
     }, [cartItems]);
 
     const playmusic = async (item, index) => {
+        console.log("ye ri lidt", product)
         loadTrack(item.mp3File.url, product, index);
     };
 
