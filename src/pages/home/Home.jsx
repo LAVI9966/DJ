@@ -11,6 +11,7 @@ import { Link } from 'react-router-dom'
 import { useState } from 'react'
 import { PDFDownloadLink, Document, Page, Text, View, StyleSheet } from "@react-pdf/renderer";
 import { MarqueeDemo } from '../../components/testimonials/Marquee.jsx'
+import ContactUs from '../../components/contact/Contact.jsx'
 
 const Home = () => {
 
@@ -20,15 +21,17 @@ const Home = () => {
 
             <Hero></Hero>
 
-            <ProductCard></ProductCard>
+            <ProductCard ></ProductCard>
             <div className='flex justify-center -mt-10 mb-4'>
                 <Link to={'/allproducts'}>
                     <button className='bg-gray-300 px-5 py-2 rounded-xl'>See More </button>
                 </Link>
             </div>
-            <Track></Track>
-            <MarqueeDemo></MarqueeDemo>
+            {/* <Track></Track> */}
+
             <Testimonial></Testimonial>
+            <MarqueeDemo></MarqueeDemo>
+            <ContactUs></ContactUs>
         </Layout>
     </>
     )

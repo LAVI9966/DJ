@@ -23,7 +23,7 @@ import { ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css'
 import Allproducts from './pages/allproduct/Allproduct'
 import Player from './components/player/Player'
-import { AnimatedGridDemo } from './pages/cart/AnimatedGridPattern'
+import ContactUs from './components/contact/Contact'
 
 
 function App() {
@@ -47,6 +47,7 @@ function App() {
               </ProtectedRoute>
             } />
             <Route path="/login" element={<Login />} />
+            <Route path="/contact" element={<ContactUs />} />
             <Route path="/allproducts" element={<Allproducts />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/productinfo/:id" element={<ProductInfo />} />
@@ -86,7 +87,7 @@ export const ProtectedRoute = ({ children }) => {
 export const ProtecteRouteForAdmin = ({ children }) => {
   const admin = JSON.parse(localStorage.getItem('user'))
 
-  if (admin.user.email === 'admin@gmail.com') {
+  if (admin.user.email === 'durshbeats@gmail.com') {
     return children
   } else {
     return <Navigate to={'/login'} />

@@ -240,7 +240,18 @@ const LicenseGenerator = ({ data }) => {
 
             <button
                 onClick={handleSubmit}
-                className="bg-blue-500 hover:bg-blue-700 text-white font-900 py-2 px-4 rounded"
+                style={{
+                    marginTop: '20px',
+                    padding: '12px 24px',
+                    backgroundColor: 'green',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '5px',
+                    textDecoration: 'none',
+                    fontSize: '16px',
+                    transition: 'background-color 0.3s, transform 0.2s',
+                    display: 'inline-block',
+                }}
             >
                 Send Email with License
             </button>

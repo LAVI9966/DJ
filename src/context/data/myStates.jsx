@@ -1,11 +1,8 @@
-import React, { useEffect, useState } from 'react'
-import MyContext from './myContext'
+import React, { useEffect, useState } from 'react';
+import MyContext from './myContext';
 import {
     Timestamp, addDoc, collection,
-    doc, onSnapshot, orderBy, query,
-    deleteDoc, setDoc,
-    getDoc,
-    getDocs
+    doc, setDoc, getDocs
 } from 'firebase/firestore';
 import { fireDB } from '../../firebase/firebaseconfig';
 import { toast } from 'react-toastify';
@@ -13,18 +10,6 @@ import axios from 'axios';
 
 const MyStates = ({ children }) => {
     const [mode, setMode] = useState('dark');
-    const toggleMode = () => {
-        if (mode == 'Light') {
-            setMode('dark');
-            document.body.style.backgroundColor = "black"
-            document.body.style.color = "white"
-        } else {
-            setMode('Light');
-            document.body.style.backgroundColor = "white"
-            document.body.style.color = "white"
-        }
-    }
-
     const [loading, setLoading] = useState(false);
     const [products, setproducts] = useState({
         file: null,
@@ -46,157 +31,176 @@ const MyStates = ({ children }) => {
                 year: "numeric",
             }
         )
-    }
-    );
-    const [licenses, setLicenses] = useState([
-        { name: 'Silver', file: null, price: '' },
-        { name: 'Gold', file: null, price: '' },
-        { name: 'Platinum', file: null, price: '' },
-    ]);
-
-    const addProduct = async () => {
-        if (products.title == null || products.price == null || products.imageUrl == null || products.category == null || products.description == null) {
-            return toast.error("All field are required")
-        }
-
-        setLoading(true);
-
-        try {
-            const productRef = collection(fireDB, 'products');
-            await addDoc(productRef, products);
-            getProductData();
-            toast.success("Add Product Successfully");
-            setLoading(false);
-        } catch (error) {
-            console.log(error);
-            setLoading(false);
-        }
-    }
-
+    });
     const [product, setproduct] = useState([]);
-
-    const getProductData = async () => {
-        setLoading(true);
-        try {
-            // const q = query(
-            //     collection(fireDB, 'products'),
-            //     orderBy('time')
-            // );
-            // const data = onSnapshot(q, (QuerySnapshot) => {
-            //     let productArray = [];
-            //     QuerySnapshot.forEach((doc) => {
-            //         productArray.push({ ...doc.data(), id: doc.id });
-            //     });
-            //     console.log("me getproduct function ka data hu", productArray)
-            //     console.log("me hu gian ", product)
-            //     setproduct(productArray);
-            //     setLoading(false);
-
-            // })
-            // return () => data;
-            console.log("hello")
-            const response = await axios.get('http://localhost:3000/fetchallsongs');
-            setproduct(response.data);
-            setLoading(false);
-            console.log("stste se product", response.data);
-        } catch (error) {
-            console.log(error)
-            setLoading(false);
-        }
-
-
-    }
-
-
-    useEffect(() => {
-        getProductData();
-    }, [])
-
-    //update product  function
-    const edithandle = (item) => {
-        setproducts(item);
-    }
-
-    const updateProductFun = async () => {
-        console.log("me click hora hu")
-        setLoading(true);
-        try {
-
-            await setDoc(doc(fireDB, 'products', products.id), products)
-            toast.success("Product Update successfully")
-            setTimeout(() => {
-                window.location.href = '/dashboard';
-            }, 800)
-            getProductData()
-            setLoading(false);
-
-        } catch (error) {
-            console.log(error)
-            setLoading(false);
-
-        }
-    }
-
-    const deleteProduct = async (item) => {
-        setLoading(true)
-        try {
-            getProductData();
-            setLoading(false)
-        } catch (error) {
-            console.log(error);
-            setLoading(false)
-        }
-    }
-
     const [order, setOrder] = useState([]);
-
-    const getOrderData = async () => {
-        setLoading(true);
-        try {
-            // Fetch orders from your MongoDB API endpoint
-            const response = await axios.get('http://localhost:3000/allorders'); // Update with your actual API URL
-            const orderArray = response.data; // Assuming the response contains the orders in the data field
-
-            console.log("Fetched orders:", orderArray);
-            setOrder(orderArray); // Update the state with the fetched orders
-        } catch (error) {
-            console.log("Error fetching orders:", error);
-        } finally {
-            setLoading(false); // Ensure loading is set to false in both success and error cases
-        }
-    };
-
-
-    const [user, setUser] = useState([])
-    const getUserData = async () => {
-        setLoading(true);
-        try {
-            const result = await getDocs(collection(fireDB, "users"));
-            const usersArray = [];
-            result.forEach((doc) => {
-                usersArray.push(doc.data());
-                setLoading(false);
-            })
-            setUser(usersArray);
-            console.log(usersArray);
-            setLoading(false)
-        } catch (error) {
-            console.log(error);
-            setLoading(false);
-        }
-    }
-
-    useEffect(() => {
-        getOrderData();
-        getUserData();
-    }, [])
-
+    const [user, setUser] = useState([]);
     const [searchkey, setsearchkey] = useState('');
     const [filterType, setFilterType] = useState('');
     const [keyFilter, setKeyFilter] = useState('');
     const [filterPrice, setFilterPrice] = useState('');
     const [sliderlowervalue, setsliderlowervalue] = useState(40);
     const [slideruppervalue, setslideruppervalue] = useState(200);
+
+    // New favorites-related state
+    const [favSongs, setFavSongs] = useState([]);
+    const [favoritesLoading, setFavoritesLoading] = useState(true);
+
+    const toggleMode = () => {
+        if (mode === 'Light') {
+            setMode('dark');
+            document.body.style.backgroundColor = "black";
+            document.body.style.color = "white";
+        } else {
+            setMode('Light');
+            document.body.style.backgroundColor = "white";
+            document.body.style.color = "white";
+        }
+    };
+
+    const addProduct = async () => {
+        if (!products.title || !products.price || !products.imageUrl || !products.category || !products.description) {
+            return toast.error("All fields are required");
+        }
+
+        setLoading(true);
+        try {
+            const productRef = collection(fireDB, 'products');
+            await addDoc(productRef, products);
+            getProductData();
+            toast.success("Add Product Successfully");
+        } catch (error) {
+            console.log(error);
+            toast.error("Failed to add product");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const getProductData = async () => {
+        setLoading(true);
+        try {
+            const response = await axios.get('http://localhost:3000/fetchallsongs');
+            setproduct(response.data);
+            console.log("state se product", response.data);
+        } catch (error) {
+            console.log(error);
+            toast.error("Failed to fetch products");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const getOrderData = async () => {
+        setLoading(true);
+        try {
+            const response = await axios.get('http://localhost:3000/allorders');
+            setOrder(response.data);
+        } catch (error) {
+            console.log("Error fetching orders:", error);
+            toast.error("Failed to fetch orders");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const getUserData = async () => {
+        setLoading(true);
+        try {
+            const result = await getDocs(collection(fireDB, "users"));
+            const usersArray = result.docs.map(doc => doc.data());
+            setUser(usersArray);
+        } catch (error) {
+            console.log(error);
+            toast.error("Failed to fetch users");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // New favorites-related functions
+    const fetchFavSongs = async () => {
+        const userid = JSON.parse(localStorage.getItem('user'))?.uid;
+        if (!userid) return;
+
+        setFavoritesLoading(true);
+        try {
+            const response = await axios.get('http://localhost:3000/get-favorites', {
+                params: { userid }
+            });
+            setFavSongs(response.data.songlist || []);
+        } catch (error) {
+            console.error("Error fetching favorites:", error);
+            toast.error("Failed to load favorites");
+        } finally {
+            setFavoritesLoading(false);
+        }
+    };
+
+    const handleFavoriteToggle = async (product) => {
+        const userid = JSON.parse(localStorage.getItem('user'))?.uid;
+        if (!userid) {
+            toast.error("Please login to add favorites");
+            return;
+        }
+
+        try {
+            const response = await axios.post('http://localhost:3000/add-to-favorites', {
+                songid: product._id,
+                userid
+            });
+            await fetchFavSongs();
+            toast.success(response.data.message);
+        } catch (error) {
+            console.error("Error updating favorites:", error);
+            toast.error("Failed to update favorites");
+        }
+    };
+
+    const isPresent = (songId) => {
+        return favSongs.some(song => song.songid === songId);
+    };
+
+    // Initialize data
+    useEffect(() => {
+        getProductData();
+        getOrderData();
+        getUserData();
+        fetchFavSongs();
+    }, []);
+
+    const edithandle = (item) => {
+        setproducts(item);
+    };
+
+    const updateProductFun = async () => {
+        setLoading(true);
+        try {
+            await setDoc(doc(fireDB, 'products', products.id), products);
+            toast.success("Product Updated successfully");
+            setTimeout(() => {
+                window.location.href = '/dashboard';
+            }, 800);
+            getProductData();
+        } catch (error) {
+            console.log(error);
+            toast.error("Failed to update product");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const deleteProduct = async () => {
+        setLoading(true);
+        try {
+            await getProductData();
+        } catch (error) {
+            console.log(error);
+            toast.error("Failed to delete product");
+        } finally {
+            setLoading(false);
+        }
+    };
 
     return (
         <MyContext.Provider value={{
@@ -207,20 +211,35 @@ const MyStates = ({ children }) => {
             products,
             setproducts,
             product,
-            addProduct, getProductData,
+            addProduct,
+            getProductData,
             edithandle,
-            keyFilter, setKeyFilter,
-            sliderlowervalue, setsliderlowervalue,
-            slideruppervalue, setslideruppervalue,
+            keyFilter,
+            setKeyFilter,
+            sliderlowervalue,
+            setsliderlowervalue,
+            slideruppervalue,
+            setslideruppervalue,
             updateProductFun,
             deleteProduct,
-            order, user, searchkey, setsearchkey,
-            filterType, setFilterType,
-            filterPrice, setFilterPrice
+            order,
+            user,
+            searchkey,
+            setsearchkey,
+            filterType,
+            setFilterType,
+            filterPrice,
+            setFilterPrice,
+            // New favorites-related values
+            favSongs,
+            favoritesLoading,
+            handleFavoriteToggle,
+            isPresent,
+            fetchFavSongs
         }}>
             {children}
         </MyContext.Provider>
-    )
-}
+    );
+};
 
-export default MyStates
+export default MyStates;

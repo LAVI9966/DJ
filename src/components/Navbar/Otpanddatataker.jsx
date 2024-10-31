@@ -2,9 +2,11 @@ import React, { useState, useEffect } from "react";
 import OTPVerification from "./OTPVerification";
 import axios from "axios";
 import { useAuth0 } from "@auth0/auth0-react";
-import { Input } from "../ui/input"
-import { Button } from "../ui/button"
+import { Input } from "../ui/input";
+import { Button } from "../ui/button";
 import TypingAnimation from "../ui/typing-animation";
+import { toast } from 'react-toastify'; // Import toast
+
 const MultiStepForm = ({ closePopup }) => {
     const [currentStep, setCurrentStep] = useState(1);
     const [formData, setFormData] = useState({
@@ -29,7 +31,7 @@ const MultiStepForm = ({ closePopup }) => {
                     setVerified(true);
                     setCurrentStep(2);
                 } else {
-                    alert("Your email is not verified. Please verify your email first.");
+                    toast.error("Your email is not verified. Please verify your email first."); // Toast for email verification
                     closePopup(false);
                 }
             }
@@ -86,10 +88,12 @@ const MultiStepForm = ({ closePopup }) => {
                     }
                     localStorage.setItem("user", JSON.stringify(storedUserData));
                 }
+                toast.success("User registered successfully!"); // Success toast
                 closePopup(false);
             }
         } catch (error) {
             console.error("Error:", error);
+            toast.error("Registration failed. Please try again."); // Error toast
         }
     };
 
@@ -98,128 +102,60 @@ const MultiStepForm = ({ closePopup }) => {
     }
 
     return (
-        <div className=" px-6 black text-white rounded-lg ">
+        <div className="px-6 bg-black text-white rounded-lg shadow-lg">
             <TypingAnimation
-                className="text-4xl py-4 font-bold text-black dark:text-white"
+                className="text-4xl py-4 font-bold text-white"
                 text="Contact Details"
             />
             {currentStep === 1 && !isGoogleLogin ? (
                 <OTPVerification nextStep={nextStep} setVerified={setVerified} />
             ) : (
-                <form onSubmit={handleSubmit} >
-                    <div className="flex flex-row md:flex-row">
-                        <div>
-                            <div className="px-5">
-                                <label className="block mb-1 font-medium" htmlFor="legalName">Legal Name</label>
-                                <Input
-                                    type="text"
-                                    name="legalName"
-                                    placeholder="Legal Name"
-                                    value={formData.legalName}
-                                    onChange={handleChange}
-                                    required
-                                    className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-300 transition duration-150 ease-in-out"
-                                />
-                            </div>
-                            <div className="px-5">
-                                <label className="block mb-1 font-medium" htmlFor="artistName">Artist Name</label>
-                                <Input
-                                    type="text"
-                                    name="artistName"
-                                    placeholder="Artist Name"
-                                    value={formData.artistName}
-                                    onChange={handleChange}
-                                    required
-                                    className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-300 transition duration-150 ease-in-out"
-                                />
-                            </div>
-                            <div className="px-5">
-                                <label className="block mb-1 font-medium" htmlFor="streetAddress">Street Address</label>
-                                <Input
-                                    type="text"
-                                    name="streetAddress"
-                                    placeholder="Streat Address"
-                                    value={formData.streetAddress}
-                                    onChange={handleChange}
-                                    required
-                                    className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-300 transition duration-150 ease-in-out"
-                                />
-                            </div>
-                            <div className="px-5">
-                                <label className="block mb-1 font-medium" htmlFor="pincode">Pincode</label>
-                                <Input
-                                    placeholder="Pincode"
-                                    type="text"
-                                    name="pincode"
-
-                                    value={formData.pincode}
-                                    onChange={handleChange}
-                                    required
-                                    className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-300 transition duration-150 ease-in-out"
-                                />
-                            </div>
+                <form onSubmit={handleSubmit}>
+                    <div className="flex flex-col md:flex-row">
+                        <div className="w-full md:w-1/2">
+                            {["legalName", "artistName", "streetAddress", "pincode"].map((field, index) => (
+                                <div className="px-5 mb-4" key={index}>
+                                    <label className="block mb-1 font-medium" htmlFor={field}>
+                                        {field.charAt(0).toUpperCase() + field.slice(1).replace(/([A-Z])/g, ' $1')}
+                                    </label>
+                                    <Input
+                                        type="text"
+                                        name={field}
+                                        placeholder={field.charAt(0).toUpperCase() + field.slice(1)}
+                                        value={formData[field]}
+                                        onChange={handleChange}
+                                        required
+                                        className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-300 transition duration-150 ease-in-out"
+                                    />
+                                </div>
+                            ))}
                         </div>
-                        <div>
-                            <div className="px-5">
-                                <label className="block mb-1 font-medium" htmlFor="state">State</label>
-                                <Input
-                                    type="text"
-                                    name="state"
-                                    value={formData.state}
-                                    placeholder="State"
-                                    onChange={handleChange}
-                                    required
-                                    className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-300 transition duration-150 ease-in-out"
-                                />
-                            </div>
-                            <div className="px-5">
-                                <label className="block mb-1 font-medium" htmlFor="country">Country</label>
-                                <Input
-                                    type="text"
-                                    name="country"
-                                    value={formData.country}
-                                    placeholder="Country"
-                                    onChange={handleChange}
-                                    required
-                                    className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-300 transition duration-150 ease-in-out"
-                                />
-                            </div>
-                            <div className="px-5">
-                                <label className="block mb-1 font-medium" htmlFor="phoneNumber">Mobile No</label>
-                                <Input
-                                    type="text"
-                                    name="phoneNumber"
-                                    placeholder="Phone Number"
-                                    value={formData.phoneNumber}
-                                    onChange={handleChange}
-                                    required
-                                    className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-300 transition duration-150 ease-in-out"
-                                />
-                            </div>
+                        <div className="w-full md:w-1/2">
+                            {["state", "country", "phoneNumber"].map((field, index) => (
+                                <div className="px-5 mb-4" key={index}>
+                                    <label className="block mb-1 font-medium" htmlFor={field}>
+                                        {field.charAt(0).toUpperCase() + field.slice(1).replace(/([A-Z])/g, ' $1')}
+                                    </label>
+                                    <Input
+                                        type="text"
+                                        name={field}
+                                        placeholder={field.charAt(0).toUpperCase() + field.slice(1)}
+                                        value={formData[field]}
+                                        onChange={handleChange}
+                                        required
+                                        className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-300 transition duration-150 ease-in-out"
+                                    />
+                                </div>
+                            ))}
                             <div className="flex px-5 justify-between mt-4">
-                                {/* <button
-                                    type="button"
-                                    onClick={prevStep}
-                                    className="bg-gray-500 text-white py-2 px-4 rounded-md hover:bg-gray-600 transition duration-150"
-                                >
-                                    Previous
-                                </button> */}
-                                <Button
-                                    type="submit"
-
-                                >
-                                    Save
-                                </Button>
+                                <Button type="submit">Save</Button>
                             </div>
                         </div>
                     </div>
                 </form>
-            )
-
-
-            }
+            )}
         </div>
     );
 };
 
-export default MultiStepForm;                    
+export default MultiStepForm;

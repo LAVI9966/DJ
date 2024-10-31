@@ -1,6 +1,7 @@
 import { useRef, useState, useEffect } from "react";
 import axios from "axios";
 import { useAuth0 } from "@auth0/auth0-react";
+import { toast } from 'react-toastify'; // Import toast
 
 export default function OTPVerification({ nextStep, setVerified }) {
     const inputsRef = useRef([]);
@@ -37,35 +38,38 @@ export default function OTPVerification({ nextStep, setVerified }) {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
+        setError(null); // Clear previous error
         try {
             const response = await axios.post("http://localhost:3000/verifyotp", {
                 email: user.email,
                 otp,
             });
             console.log("OTP Verified:", response);
-            if (response.status == 200) {
-                if (nextStep) {
-                    setVerified(true);
-                    nextStep();
-                }
+            if (response.status === 200) {
+                setVerified(true);
+                nextStep();
+                toast.success("OTP verified successfully!"); // Success toast
             }
         } catch (err) {
             console.error("Verification Failed:", err);
             setError("OTP verification failed. Please try again.");
+            toast.error("OTP verification failed. Please try again."); // Error toast
         } finally {
             setLoading(false);
         }
     };
 
     useEffect(() => {
-        inputsRef.current.forEach((input, index) => {
+        const inputs = inputsRef.current;
+        inputs.forEach((input, index) => {
             input.addEventListener("keydown", (e) => handleKeyDown(e, index));
             input.addEventListener("paste", handlePaste);
         });
 
+        // Cleanup event listeners
         // return () => {
-        //     inputsRef.current.forEach((input) => {
-        //         input.removeEventListener("keydown", handleKeyDown);
+        //     inputs.forEach((input) => {
+        //         input.removeEventListener("keydown", (e) => handleKeyDown(e));
         //         input.removeEventListener("paste", handlePaste);
         //     });
         // };

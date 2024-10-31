@@ -1,29 +1,32 @@
 import React from 'react'
 import Meteors from "../ui/meteors"
-
+import bgimg from './background.jpg'
+import { CheckIcon, ChevronRightIcon } from "lucide-react";
+import { AnimatedSubscribeButton } from "../ui/animated-subscribe-button";
+import { RainbowButton } from "../ui/rainbow-button";
+import { Link } from 'react-router-dom';
 const Hero = () => {
     return (
         <div
-            className="hero relative min-h-screen flex flex-col items-center justify-center overflow-hidden bg-black"
+            className="hero relative min-h-screen flex flex-col items-center bg-center bg-cover justify-center overflow-hidden bg-black"
+            style={{ backgroundImage: `url(${bgimg})` }}
         >
+            {/* <img src={bgimg} /> */}
             {/* Meteor background effect */}
             <Meteors number={30} />
 
-            <div className="text-center relative z-10"> {/* Ensure text is above the meteors */}
-                <h1 className="text-4xl md:text-6xl font-bold text-white">Discover Music</h1>
-                <p className="text-lg mt-4 text-white">Explore the world of melodies</p>
+            <div className={`text-center relative z-10 bg-[url(${bgimg})] h-76 bg-cover bg-center flex flex-col justify-center items-center`}>
+                <h1 className="text-4xl md:text-6xl font-bold text-white">DURSH BEATS</h1>
+                <p className="text-lg mt-4 text-white">Discover and license industry standard beats</p>
                 <div className="mt-6 space-x-4">
-                    <button className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-md">
-                        Listen Now
-                    </button>
-                    <button className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md">
-                        Top Hits
-                    </button>
-                    <button className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-md">
-                        New Releases
+                    <a href='#songs'>
+                        <RainbowButton>Listen Beats</RainbowButton>
+                    </a>                   <button className="border border-white text-white bg-transparent hover:bg-white hover:text-black active:bg-white active:text-black font-bold py-2 px-4 rounded-md transition duration-200">
+                        Contact for work
                     </button>
                 </div>
             </div>
+
         </div>
     )
 }

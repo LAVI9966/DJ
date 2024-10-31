@@ -25,3 +25,5 @@ const cartSlice = createSlice({
 export const { addToCart, deleteFromCart, clearCart } = cartSlice.actions;
 
 export default cartSlice.reducer;
+
+{/* <Dialog as="div" className="relative" onClose={closePopup}></Dialog> */ }

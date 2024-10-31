@@ -7,8 +7,8 @@ import { Provider } from 'react-redux'
 import { PlayerProvider } from './context/player/playerContext.jsx'
 import Play from './components/player/play2.jsx'
 import { Auth0Provider } from "@auth0/auth0-react";
-
-
+import MyStates from './context/data/myStates.jsx'
+import { FavoritesProvider } from './context/player/FavoritesProvider.jsx'
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <Auth0Provider
@@ -18,12 +18,19 @@ createRoot(document.getElementById('root')).render(
         redirect_uri: window.location.origin
       }}
     >
-      <PlayerProvider>
-        <Provider store={store}>
-          <App />
-          <Play></Play>
-        </Provider>
-      </PlayerProvider>
+      <FavoritesProvider>
+
+        <PlayerProvider>
+          <Provider store={store}>
+            <MyStates>
+              <App />
+
+              <Play></Play>
+            </MyStates>
+          </Provider>
+        </PlayerProvider>
+      </FavoritesProvider>
     </Auth0Provider>
   </StrictMode>,
 )
+

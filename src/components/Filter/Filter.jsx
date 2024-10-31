@@ -59,7 +59,7 @@ function Filter() {
 
     return (
         <div className="container mx-auto px-4 mt-6">
-            <div className={`p-6 rounded-lg shadow-lg ${mode === 'dark' ? 'bg-gray-800 text-white' : 'bg-white text-gray-900'}`}>
+            <div className={`p-6 rounded-lg shadow-lg ${mode === 'dark' ? 'bg-black text-white' : 'bg-white text-gray-900'}`}>
                 <div className="relative mb-5">
                     <div className="absolute inset-y-0 left-0 flex items-center pl-3">
                         <svg className="w-5 h-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
@@ -82,6 +82,8 @@ function Filter() {
                             setsearchkey("");
                             setFilterType('');
                             setKeyFilter('');
+                            setsliderlowervalue(40)
+                            setslideruppervalue(200)
                             setRangeValue([40, 200]);
                         }}
                         className={`px-4 py-2 rounded-md text-sm font-medium focus:outline-none ${mode === 'dark' ? 'bg-gray-700 text-white hover:bg-gray-600' : 'bg-gray-200 hover:bg-gray-300 text-gray-800'}`}

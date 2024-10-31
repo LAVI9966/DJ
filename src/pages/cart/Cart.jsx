@@ -17,36 +17,41 @@ function Cart() {
     const SHIPPING_COST = 100;
 
     const [totalAmount, setTotalAmount] = useState(0);
-    const [name, setName] = useState('');
-    const [artistName, setArtistName] = useState('');
-    const [email, setEmail] = useState('');
-    const [phoneNumber, setphoneNumber] = useState('');
-    const [streetAddress, setStreetAddress] = useState('');
-    const [pincode, setPincode] = useState('');
-    const [state, setState] = useState('');
-    const [country, setCountry] = useState('');
+    const [userData, setUserData] = useState({
+        name: '',
+        artistName: '',
+        email: '',
+        phoneNumber: '',
+        streetAddress: '',
+        pincode: '',
+        state: '',
+        country: ''
+    });
 
     const { user } = useAuth0();
-    console.log(user);
     const userid = JSON.parse(localStorage.getItem("user"));
+
     useEffect(() => {
         const getUser = async () => {
             try {
                 const response = await axios.get('http://localhost:3000/getuser', { params: { email: userid.email } });
                 console.log("User data: ", response.data);
-                setArtistName(response.data.artistName);
-                setName(response.data.legalName);
-                setphoneNumber(response.data.phoneNumber);
-                setStreetAddress(response.data.streetAddress);
-                setPincode(response.data.pincode);
-                setState(response.data.state);
-                setCountry(response.data.country);
+                setUserData({
+                    artistName: response.data.artistName,
+                    name: response.data.legalName,
+                    phoneNumber: response.data.phoneNumber,
+                    streetAddress: response.data.streetAddress,
+                    pincode: response.data.pincode,
+                    state: response.data.state,
+                    country: response.data.country,
+                });
             } catch (error) {
                 console.log("Error fetching user data: ", error);
             }
         };
+
         getUser();
-    }, [user]);
+    }, [user, userid]);
 
     useEffect(() => {
         localStorage.setItem('cart', JSON.stringify(cartItems));
@@ -61,30 +66,28 @@ function Cart() {
 
     const deleteCart = (item) => {
         dispatch(deleteFromCart({
-            item_id: item._id, licence_id: item.selectedLicense._id
+            item_id: item._id,
+            licence_id: item.selectedLicense._id
         }));
         toast.success('Item Deleted Successfully');
     };
 
     const handleClearCart = () => {
         dispatch(clearCart());
+        toast.info('Cart Cleared');
     };
-    const buyNow = async () => {
-        const getUserFromStorage = () => {
-            const storedUser = JSON.parse(localStorage.getItem("user"));
-            console.log("hihhihihihiihi", storedUser)
-            if (storedUser) {
-                return { uid: storedUser.uid, email: storedUser.email };
-            }
-            return { uid: null, email: null };
-        };
-        const { uid, email } = getUserFromStorage();
 
+    const buyNow = async () => {
+        const { uid, email } = userid || {};
+        if (!uid || !email) {
+            toast.error("Chutmarike login to kar pahle")
+            return;
+        }
         const options = {
             key: "rzp_test_PbSgvm23unv6ow", // Replace with your Razorpay Key
             amount: grandTotal * 100, // Amount in paisa
             currency: "INR",
-            order_receipt: `order_rcptid_${name}`,
+            order_receipt: `order_rcptid_${userData.name}`,
             name: "E-Bharat",
             description: "for testing purpose",
             handler: async (response) => {
@@ -101,16 +104,7 @@ function Cart() {
                             licenseUrl: item.selectedLicense?.licenseUrl,
                         },
                     })),
-                    addressInfo: {
-                        name,
-                        artistName,
-                        email,
-                        phoneNumber: phoneNumber,
-                        streetAddress,
-                        pincode,
-                        state,
-                        country,
-                    },
+                    addressInfo: { ...userData },
                     email,
                     paymentId,
                     userid: uid,
@@ -123,9 +117,7 @@ function Cart() {
                 };
 
                 try {
-                    console.log("chuddakad", orderInfo)
                     const response = await axios.post('http://localhost:3000/orders', orderInfo);
-
                     if (response.status === 201) {
                         toast.success('Payment Successful');
                         handleClearCart();
@@ -147,7 +139,6 @@ function Cart() {
 
     return (
         <Layout>
-            {/* <AnimatedGridPatternDemo></AnimatedGridPatternDemo> */}
             <div className={`min-h-screen pt-28 pb-16 transition-all ${mode === 'dark' ? 'black text-white' : 'bg-gray-50 text-gray-900'}`}>
                 <h1 className="text-4xl font-bold text-center mb-8">Your Cart</h1>
 
