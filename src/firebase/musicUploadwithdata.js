@@ -11,10 +11,10 @@ export const uploadMusicFile = async (file) => {
 
         const data = new FormData();
         data.append("file", file);
-        data.append("upload_preset", "file_upload"); // Your preset name
-        data.append("cloud_name", "dggtmwjwt");      // Replace with your cloud name
+        data.append("upload_preset", "oqqpsascs5tst"); // Your preset name
+        data.append("cloud_name", "dxvhzvf5j");      // Replace with your cloud name
 
-        const res = await fetch("https://api.cloudinary.com/v1_1/dggtmwjwt/raw/upload", {
+        const res = await fetch("https://api.cloudinary.com/v1_1/dxvhzvf5j/raw/upload", {
             method: "POST",
             body: data,
         });
@@ -37,7 +37,7 @@ export const addMusicTrack = async (track) => {
         // const docRef = await addDoc(collection(fireDB, 'products'), track);
         // console.log('Document written with ID ', docRef.id);
 
-        const response = await axios.post('http://localhost:3000/addproduct', track);
+        const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/addproduct`, track);
         console.log(response);
         return response;
     } catch (error) {

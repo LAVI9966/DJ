@@ -19,13 +19,13 @@ export const FavoritesProvider = ({ children }) => {
         }
 
         try {
-            const response = await axios.get('http://localhost:3000/get-favorites', {
+            const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/get-favorites`, {
                 params: { userid }
             });
             setFavoriteSongs(response.data.songlist || []);
         } catch (error) {
-            console.error("Error fetching favorites:", error);
-            toast.error("Failed to load favorites");
+            // console.error("Error fetching favorites:", error);
+            // toast.error("Failed to load favorites");
         } finally {
             setIsLoading(false);
         }
@@ -39,7 +39,7 @@ export const FavoritesProvider = ({ children }) => {
         }
 
         try {
-            const response = await axios.post('http://localhost:3000/add-to-favorites', {
+            const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/add-to-favorites`, {
                 songid: product._id,
                 userid
             });

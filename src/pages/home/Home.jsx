@@ -12,6 +12,8 @@ import { useState } from 'react'
 import { PDFDownloadLink, Document, Page, Text, View, StyleSheet } from "@react-pdf/renderer";
 import { MarqueeDemo } from '../../components/testimonials/Marquee.jsx'
 import ContactUs from '../../components/contact/Contact.jsx'
+import PricingPage from '../../components/pricing & sevices/Pricing.jsx'
+import ServicesPage from '../../components/pricing & sevices/ServicePage.jsx'
 
 const Home = () => {
 
@@ -31,6 +33,8 @@ const Home = () => {
 
             <Testimonial></Testimonial>
             <MarqueeDemo></MarqueeDemo>
+            <PricingPage></PricingPage>
+            <ServicesPage></ServicesPage>
             <ContactUs></ContactUs>
         </Layout>
     </>

@@ -40,7 +40,7 @@ export default function OTPVerification({ nextStep, setVerified }) {
         setLoading(true);
         setError(null); // Clear previous error
         try {
-            const response = await axios.post("http://localhost:3000/verifyotp", {
+            const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/verifyotp`, {
                 email: user.email,
                 otp,
             });
@@ -76,40 +76,43 @@ export default function OTPVerification({ nextStep, setVerified }) {
     }, []);
 
     return (
-        <form onSubmit={handleSubmit} className="space-y-4">
-            <h1 className="text-2xl font-bold">Verify Email and Continue</h1>
-            <p className="text-slate-500">
-                Enter the 4-digit verification code sent to your phone.
-            </p>
-            <div className="flex justify-center gap-3">
-                {Array(4)
-                    .fill(0)
-                    .map((_, i) => (
-                        <input
-                            key={i}
-                            type="text"
-                            maxLength="1"
-                            ref={(el) => (inputsRef.current[i] = el)}
-                            onChange={(e) => handleInputChange(e, i)}
-                            className="w-14 h-14 text-center text-2xl font-bold bg-slate-100 border rounded focus:ring-indigo-300"
-                        />
-                    ))}
-            </div>
-            <button
-                type="submit"
-                disabled={loading}
-                className={`w-full mt-4 py-2 bg-indigo-500 text-white rounded ${loading ? "opacity-50" : "hover:bg-indigo-600"
-                    }`}
-            >
-                {loading ? "Verifying..." : "Verify Account"}
-            </button>
-            {error && <p className="text-red-500">{error}</p>}
-            <p className="text-sm text-slate-500 mt-2">
-                Didn't receive the code?{" "}
-                <a href="#0" className="text-indigo-500 hover:text-indigo-600">
-                    Resend
-                </a>
-            </p>
-        </form>
+        <>
+            <div>PLEASE VERIFY YOUR EMAIL </div>
+            {/* <form onSubmit={handleSubmit} className="space-y-4">
+                <h1 className="text-2xl font-bold">Verify Email and Continue</h1>
+                <p className="text-slate-500">
+                    Enter the 4-digit verification code sent to your phone.
+                </p>
+                <div className="flex justify-center gap-3">
+                    {Array(4)
+                        .fill(0)
+                        .map((_, i) => (
+                            <input
+                                key={i}
+                                type="text"
+                                maxLength="1"
+                                ref={(el) => (inputsRef.current[i] = el)}
+                                onChange={(e) => handleInputChange(e, i)}
+                                className="w-14 h-14 text-center text-2xl font-bold bg-slate-100 border rounded focus:ring-indigo-300"
+                            />
+                        ))}
+                </div>
+                <button
+                    type="submit"
+                    disabled={loading}
+                    className={`w-full mt-4 py-2 bg-indigo-500 text-white rounded ${loading ? "opacity-50" : "hover:bg-indigo-600"
+                        }`}
+                >
+                    {loading ? "Verifying..." : "Verify Account"}
+                </button>
+                {error && <p className="text-red-500">{error}</p>}
+                <p className="text-sm text-slate-500 mt-2">
+                    Didn't receive the code?{" "}
+                    <a href="#0" className="text-indigo-500 hover:text-indigo-600">
+                        Resend
+                    </a>
+                </p>
+            </form> */}
+        </>
     );
 }

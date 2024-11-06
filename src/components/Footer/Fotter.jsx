@@ -28,11 +28,11 @@ export default function Footer() {
                     <SparklesText size={30} text="DURSH" />
                 </Link>
                 <div className="text-center mb-4 md:mb-0">
-                    <p className={`text-sm ${mode === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
+                    {/* <p className={`text-sm ${mode === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
                         Made with ❤️ by <a href="#" className="hover:text-indigo-500">
                             <HyperText className="text-3xl font-bold text-black dark:text-white" text="LAVISH GEHLOD" />
                         </a>
-                    </p>
+                    </p> */}
                     <p className={`text-xs ${mode === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
                         Exploring Creativity and Innovation · © {year}
                     </p>

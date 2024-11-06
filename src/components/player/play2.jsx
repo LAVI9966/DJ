@@ -1,22 +1,17 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState, useContext, useRef } from 'react';
 import { GrCaretNext, GrCaretPrevious, GrPlay, GrPause } from "react-icons/gr";
-import { FaVolumeUp, FaVolumeMute, FaShoppingCart, FaTrash, FaPlay } from "react-icons/fa";
+import { FaVolumeUp, FaVolumeMute, FaShoppingCart, FaTrash, FaPlay, FaEllipsisV } from "react-icons/fa";
 import { RiForward10Fill, RiReplay10Fill, RiLoopLeftFill } from "react-icons/ri";
-import { usePlayer } from '../../context/player/playerContext';
-import { FiShoppingCart } from "react-icons/fi";
 import { MdFavorite, MdFavoriteBorder } from "react-icons/md";
+import { motion, AnimatePresence } from 'framer-motion';
+import { usePlayer } from '../../context/player/playerContext';
 import { useDispatch, useSelector } from 'react-redux';
 import { addToCart, deleteFromCart } from '../../redux/cartSlice';
-import { toast } from 'react-toastify';
-import axios from 'axios';
-import MyContext from '../../context/data/myContext';
-import { useAuth0 } from '@auth0/auth0-react';
-import { collection, query, where, getDocs } from 'firebase/firestore';
-import { fireDB } from '../../firebase/firebaseconfig';
-import { motion, AnimatePresence } from 'framer-motion';
 import { useFavorites } from '../../context/player/FavoritesProvider';
+import { toast } from 'react-toastify';
+import { useAuth0 } from '@auth0/auth0-react';
+import MyContext from '../../context/data/myContext';
 
-// License Modal Component
 const LicenseModal = ({ isOpen, onClose, product, licenses, onSelectLicense, onDeleteLicense, cartItems }) => {
     if (!isOpen) return null;
 
@@ -126,6 +121,10 @@ const LicenseModal = ({ isOpen, onClose, product, licenses, onSelectLicense, onD
 };
 
 const Play = () => {
+    const [showMoreControls, setShowMoreControls] = useState(false);
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [menuPosition, setMenuPosition] = useState({ top: 0, right: 0 });
+
     const { playNext, playPrevious, curritem, isPlaying, togglePlayPause } = usePlayer();
     const [currentTime, setCurrentTime] = useState(0);
     const [duration, setDuration] = useState(0);
@@ -136,14 +135,13 @@ const Play = () => {
     const [showVolumeSlider, setShowVolumeSlider] = useState(false);
     const [modalOpen, setModalOpen] = useState(false);
     const [filteredLicenses, setFilteredLicenses] = useState([]);
+    const [isSliderOpen, setIsSliderOpen] = useState(false);
 
-    // New states for cart and favorites
     const dispatch = useDispatch();
     const cartItems = useSelector((state) => state.cart);
     const { user } = useAuth0();
     const userid = JSON.parse(localStorage.getItem('user'));
     const [userPurchasedLicenses, setUserPurchasedLicenses] = useState([]);
-    // const [favSongs, setFavSongs] = useState([]);
     const context = useContext(MyContext);
     const { isPresent, toggleFavorite } = useFavorites();
 
@@ -275,58 +273,197 @@ const Play = () => {
     const toggleVolumeSlider = () => {
         setShowVolumeSlider(!showVolumeSlider);
     };
+    const handleMenuClick = (event) => {
+        const buttonRect = event.currentTarget.getBoundingClientRect();
+        setMenuPosition({
+            top: buttonRect.top - 120, // Position menu above the button
+            right: window.innerWidth - buttonRect.right
+        });
+        setIsMenuOpen(!isMenuOpen);
+    };
+    const handleVolumeButtonClick = () => {
+        setIsSliderOpen((prev) => !prev);
+    };
+    const menuRef = useRef(null);
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (menuRef.current && !menuRef.current.contains(event.target)) {
+                setIsMenuOpen(false); // Close menu when clicking outside
+            }
+        };
+
+        if (isMenuOpen) {
+            document.addEventListener('mousedown', handleClickOutside);
+        }
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [isMenuOpen]);
 
     return (
         <>
-            <div className={`fixed bottom-0 left-0 w-full bg-gray-900 text-white shadow-lg ${playerActive ? 'block z-10' : 'hidden'}`}>
+            {/* Dropdown Menu */}
+            <AnimatePresence>
+                {isMenuOpen && (
+                    <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        ref={menuRef}
+                        exit={{ opacity: 0, y: 10 }}
+                        className="fixed bg-gray-900 rounded-lg shadow-xl border border-gray-800 z-50"
+                        style={{
+                            top: menuPosition.top,
+                            right: menuPosition.right,
+                        }}
+                    >
+                        <div className="p-2 space-y-2">
+                            <div className="flex items-center space-x-3 p-2 hover:bg-gray-800 rounded-lg cursor-pointer">
+                                <div className="relative group">
+                                    <button
+                                        onClick={toggleMute}
+                                        className="hover:bg-gray-700 rounded-full transition-all"
+                                    >
+                                        {isMuted ? <FaVolumeMute size={20} /> : <FaVolumeUp size={20} />}
+                                    </button>
+                                    <div className="absolute left-0 bottom-full mb-2 hidden group-hover:block">
+                                        <div className="bg-gray-800 rounded-lg p-2 shadow-xl">
+                                            <input
+                                                type="range"
+                                                min="0"
+                                                max="1"
+                                                step="0.01"
+                                                value={volume}
+                                                onChange={handleVolumeChange}
+                                                className="w-24 accent-blue-500"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                                <span>Volume</span>
+                            </div>
+
+                            <div
+                                onClick={toggleRepeat}
+                                className={`flex items-center space-x-3 p-2 hover:bg-gray-800 rounded-lg cursor-pointer ${isRepeating ? 'text-blue-500' : ''}`}
+                            >
+                                <RiLoopLeftFill size={20} />
+                                <span>Repeat</span>
+                            </div>
+
+                            <div
+                                onClick={() => toggleFavorite(curritem)}
+                                className="flex items-center space-x-3 p-2 hover:bg-gray-800 rounded-lg cursor-pointer"
+                            >
+                                {isPresent(curritem?._id) ? (
+                                    <MdFavorite className="text-red-500" size={20} />
+                                ) : (
+                                    <MdFavoriteBorder size={20} />
+                                )}
+                                <span>Favorite</span>
+                            </div>
+
+                            <div
+                                onClick={() => {
+                                    if (curritem) {
+                                        setFilteredLicenses(curritem.licenses);
+                                        setModalOpen(true);
+                                    }
+                                }}
+                                className="flex items-center space-x-3 p-2 hover:bg-gray-800 rounded-lg cursor-pointer"
+                            >
+                                <FaShoppingCart size={20} />
+                                <span>Add to Cart</span>
+                            </div>
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
+            {/* Main Player */}
+            <div className={`fixed bottom-0 left-0 w-full bg-gradient-to-b from-gray-900 to-black text-white shadow-xl border-t border-gray-800 ${playerActive ? 'block z-40' : 'hidden'}`}>
                 {/* Progress Bar */}
-                <div className="w-full px-2 pt-1">
+                <div className="relative w-full h-1 bg-gray-800">
+                    <div
+                        className="absolute h-full bg-gradient-to-r from-blue-500 to-purple-500 rounded-full"
+                        style={{ width: `${duration ? (currentTime / duration) * 100 : 0}%` }}
+                    />
                     <input
                         type="range"
                         min="0"
                         max="100"
                         value={duration ? (currentTime / duration) * 100 : 0}
                         onChange={handleSeek}
-                        className="w-full h-1 bg-gray-700 rounded-full cursor-pointer"
+                        className="absolute w-full h-full opacity-0 cursor-pointer"
                     />
                 </div>
 
-                <div className="flex flex-col md:flex-row items-center px-4 py-2 space-y-2 md:space-y-0">
-                    {/* Track Info - Always visible */}
+                <div className="flex flex-col md:flex-row items-center px-2 py-2 space-y-2 md:space-y-0">
+                    {/* Track Info */}
                     <div className="flex items-center w-full md:w-1/4 space-x-3">
-                        <img
-                            src={curritem?.image?.url}
-                            alt="Song Cover"
-                            className="w-12 h-12 rounded-lg object-cover"
-                        />
-                        <div className="min-w-0 flex-1">
-                            <h3 className="font-bold truncate">{curritem?.title}</h3>
-                            <div className="text-xs text-gray-400 truncate">
-                                {curritem?.genre} | {curritem?.key} | {curritem?.bpm} BPM
+                        <div className="relative group">
+                            <img
+                                src={curritem?.image?.url}
+                                alt="Song Cover"
+                                className="w-12 h-12 rounded-lg object-cover transform transition-transform group-hover:scale-105 shadow-lg"
+                            />
+                            <div className="absolute inset-0 bg-black bg-opacity-40 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                <FaPlay className="text-white text-xl" />
                             </div>
+                        </div>
+                        <div className="min-w-0 flex-1">
+                            <h3 className="font-bold truncate hover:text-blue-400 transition-colors">
+                                {curritem?.title}
+                            </h3>
+                            <div className="text-xs text-gray-400 truncate">
+                                {curritem?.genre} • {curritem?.key} • {curritem?.bpm} BPM
+                            </div>
+                        </div>
+                        <div className="md:hidden  flex justify-end">
+                            <button
+                                onClick={handleMenuClick}
+                                className="p-2 hover:bg-gray-800 rounded-full transition-colors"
+                            >
+                                <FaEllipsisV size={20} />
+                            </button>
                         </div>
                     </div>
 
-                    {/* Main Controls - Center */}
+                    {/* Main Controls */}
                     <div className="flex flex-col items-center w-full md:w-2/4 space-y-1">
+                        {/* Mobile Menu Button */}
+
                         {/* Playback Controls */}
-                        <div className="flex items-center justify-center space-x-2">
-                            <button onClick={skipBackward} className="p-1 hover:bg-gray-800 rounded">
+                        <div className="flex items-center justify-center space-x-4">
+                            <button
+                                onClick={skipBackward}
+                                className="hidden md:block p-2 hover:bg-gray-800 rounded-full transition-all hover:scale-110"
+                            >
                                 <RiReplay10Fill size={20} />
                             </button>
-                            <button onClick={playPrevious} className="p-1 hover:bg-gray-800 rounded">
+                            <button
+                                onClick={playPrevious}
+                                className="p-2 hover:bg-gray-800 rounded-full transition-all hover:scale-110"
+                            >
                                 <GrCaretPrevious size={20} />
                             </button>
-                            <button
+                            <motion.button
+                                whileTap={{ scale: 0.95 }}
                                 onClick={togglePlayPause}
-                                className="rounded-full w-10 h-10 flex items-center justify-center bg-white text-black hover:bg-gray-200"
+                                className="rounded-full w-12 h-12 flex items-center justify-center bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white shadow-lg transition-all hover:scale-105"
                             >
-                                {isPlaying ? <GrPause size={20} /> : <GrPlay size={20} />}
-                            </button>
-                            <button onClick={playNext} className="p-1 hover:bg-gray-800 rounded">
+                                {isPlaying ? <GrPause size={24} /> : <GrPlay size={24} />}
+                            </motion.button>
+                            <button
+                                onClick={playNext}
+                                className="p-2 hover:bg-gray-800 rounded-full transition-all hover:scale-110"
+                            >
                                 <GrCaretNext size={20} />
                             </button>
-                            <button onClick={skipForward} className="p-1 hover:bg-gray-800 rounded">
+                            <button
+                                onClick={skipForward}
+                                className="hidden md:block p-2 hover:bg-gray-800 rounded-full transition-all hover:scale-110"
+                            >
                                 <RiForward10Fill size={20} />
                             </button>
                         </div>
@@ -339,95 +476,104 @@ const Play = () => {
                         </div>
                     </div>
 
-                    {/* Additional Controls - Right */}
-                    <div className="flex items-center justify-end w-full md:w-1/4 space-x-3">
-                        {/* Volume Control */}
+                    {/* Desktop Controls */}
+                    <div className="hidden md:flex items-center justify-end w-full md:w-1/4 space-x-3">
                         <div className="relative group">
-                            <button onClick={toggleVolumeSlider} className="p-2 hover:bg-gray-800 rounded">
+                            <button
+                                onClick={toggleMute}
+                                className="p-2 hover:bg-gray-800 rounded-full transition-all hover:scale-110"
+                            >
                                 {isMuted ? <FaVolumeMute size={20} /> : <FaVolumeUp size={20} />}
                             </button>
-                            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block">
-                                <input
-                                    type="range"
-                                    min="0"
-                                    max="1"
-                                    step="0.01"
-                                    value={volume}
-                                    onChange={handleVolumeChange}
-                                    className="w-24 h-1 bg-gray-700 rounded-full cursor-pointer transform rotate-270"
-                                />
+                            <div className="absolute -left-24 bottom-full mb-2 hidden group-hover:block">
+                                <div className="bg-gray-800 rounded-lg p-2 shadow-xl">
+                                    <input
+                                        type="range"
+                                        min="0"
+                                        max="1"
+                                        step="0.01"
+                                        value={volume}
+                                        onChange={handleVolumeChange}
+                                        className="w-24 accent-blue-500"
+                                    />
+                                </div>
                             </div>
                         </div>
 
-                        {/* Loop Control */}
-                        <button
+                        <motion.button
+                            whileHover={{ scale: 1.1 }}
+                            whileTap={{ scale: 0.95 }}
                             onClick={toggleRepeat}
-                            className={`p-2 hover:bg-gray-800 rounded ${isRepeating ? 'text-green-500' : ''}`}
+                            className={`p-2 hover:bg-gray-800 rounded-full transition-colors ${isRepeating ? 'text-blue-500' : ''}`}
                         >
                             <RiLoopLeftFill size={20} />
-                        </button>
+                        </motion.button>
 
-                        {/* Favorite Button */}
                         <motion.button
                             whileHover={{ scale: 1.1 }}
                             whileTap={{ scale: 0.95 }}
                             onClick={() => toggleFavorite(curritem)}
-                            className="p-2 hover:bg-gray-800 rounded"
+                            className="p-2 hover:bg-gray-800 rounded-full transition-colors"
                         >
                             {isPresent(curritem?._id) ? (
                                 <MdFavorite className="text-red-500" size={20} />
                             ) : (
-                                <MdFavoriteBorder className="text-gray-400" size={20} />
+                                <MdFavoriteBorder size={20} />
                             )}
                         </motion.button>
 
-                        {/* Cart Button - Update the onClick handler */}
-                        <button
+                        <motion.button
+                            whileHover={{ scale: 1.1 }}
+                            whileTap={{ scale: 0.95 }}
                             onClick={() => {
                                 if (curritem) {
                                     setFilteredLicenses(curritem.licenses);
                                     setModalOpen(true);
                                 }
                             }}
-                            className="p-2 hover:bg-gray-800 rounded"
+                            className="p-2 hover:bg-gray-800 rounded-full transition-colors"
                             disabled={!curritem}
                         >
-                            <FiShoppingCart size={20} />
-                        </button>
+                            <FaShoppingCart size={20} />
+                        </motion.button>
                     </div>
-
-                    {/* License Modal */}
-                    {modalOpen && curritem && (
-                        <LicenseModal
-                            isOpen={modalOpen}
-                            onClose={() => setModalOpen(false)}
-                            product={curritem}
-                            licenses={filteredLicenses}
-                            onSelectLicense={(licenseId) => addCart(licenseId)}
-                            onDeleteLicense={handleDeleteLicense}
-                            cartItems={cartItems}
-                        />
-                    )}
-
-                    {/* Custom Scrollbar Styles */}
-                    <style jsx global>{`
-                .custom-scrollbar::-webkit-scrollbar {
-                    width: 8px;
-                }
-                .custom-scrollbar::-webkit-scrollbar-track {
-                    background: rgba(0, 0, 0, 0.1);
-                    border-radius: 4px;
-                }
-                .custom-scrollbar::-webkit-scrollbar-thumb {
-                    background: rgba(59, 130, 246, 0.5);
-                    border-radius: 4px;
-                }
-                .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-                    background: rgba(59, 130, 246, 0.7);
-                }`}
-                    </style>
                 </div>
+
+                {modalOpen && curritem && (
+                    <LicenseModal
+                        isOpen={modalOpen}
+                        onClose={() => setModalOpen(false)}
+                        product={curritem}
+                        licenses={filteredLicenses}
+                        onSelectLicense={(licenseId) => addCart(licenseId)}
+                        onDeleteLicense={handleDeleteLicense}
+                        cartItems={cartItems}
+                    />
+                )}
             </div>
-        </>)
+
+            {/* Custom Scrollbar Styles */}
+            <style jsx global>{`
+                    .custom-scrollbar::-webkit-scrollbar {
+                        width: 8px;
+                    }
+                    .custom-scrollbar::-webkit-scrollbar-track {
+                        background: rgba(0, 0, 0, 0.1);
+                        border-radius: 4px;
+                    }
+                    .custom-scrollbar::-webkit-scrollbar-thumb {
+                        background: rgba(59, 130, 246, 0.5);
+                        border-radius: 4px;
+                    }
+                    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+                        background: rgba(59, 130, 246, 0.7);
+                    }`}
+            </style>
+        </>
+    );
 };
+
 export default Play;
+
+
+

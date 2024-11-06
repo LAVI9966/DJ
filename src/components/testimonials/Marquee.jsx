@@ -2,41 +2,46 @@ import { useContext, useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import Marquee from "../ui/marquee";
 import myContext from "../../context/data/myContext";
-
+import Rating from '@mui/material/Rating';
 const reviews = [
     {
         name: "MC Spark",
         username: "@mc_spark",
         body: "This drill beat is relentless! The tight 808s and dark melody make it impossible not to vibe with.",
+        ratingvalue: 5,
         img: "https://images.unsplash.com/photo-1497562187797-ec8cb333f512?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3Dk",
     },
     {
         name: "SHARV",
         username: "@sharv",
         body: "Incredible use of Indian samples, giving it a unique and standout quality that's bound to turn heads.",
+        ratingvalue: 4,
         img: "https://scontent.fidr4-1.fna.fbcdn.net/v/t39.30808-6/337285883_2800784186741452_8445561761775530984_n.jpg?_nc_cat=106&ccb=1-7&_nc_sid=a5f93a&_nc_ohc=Fx4_WydQRHYQ7kNvgErMR7Z&_nc_zt=23&_nc_ht=scontent.fidr4-1.fna&_nc_gid=Ag3dPhcRC5lyIcwokaNXMin&oh=00_AYCMYQOxPZ8rN4j8da9gGB27wzOUKQpAsLn-lATEfF7-Ww&oe=67240FD7",
     },
     {
         name: "Cursed Kid",
         username: "@cursed_kid",
         body: "The beats were top-notch it truly elevated my music to a whole new level.",
+        ratingvalue: 4.5,
         img: "https://images.unsplash.com/photo-1415886541506-6efc5e4b1786?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     },
     {
         name: "RhyThm X",
         username: "@rhythm_x",
         body: "Each beat was a masterpiece that perfectly complemented my vocal style.",
+        ratingvalue: 4,
         img: "https://scontent.fidr4-1.fna.fbcdn.net/v/t39.30808-6/448763466_1004288424553864_6038661064834208573_n.jpg?_nc_cat=106&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=hWbBfmrlslQQ7kNvgGyHAG-&_nc_zt=23&_nc_ht=scontent.fidr4-1.fna&_nc_gid=Ap0ZF55AEUjfM_-lQJeiVhI&oh=00_AYB4OuOKAnx5tlWLCy-GUHo252R26B1LoJLBdgq9P7Nveg&oe=67240FEE",
     },
     {
         name: "Dilshan",
         username: "@dilshan",
         body: "Absolutely loved working with DURSH! The quality and creativity of his beats are unmatched.",
+        ratingvalue: 5,
         img: "https://images.unsplash.com/photo-1527630941-4a229fd674ab?q=80&w=353&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     },
 ];
 
-const ReviewCard = ({ img, name, username, body }) => {
+const ReviewCard = ({ img, name, username, ratingvalue, body }) => {
     return (
         <figure
             className={cn(
@@ -48,12 +53,16 @@ const ReviewCard = ({ img, name, username, body }) => {
             )}
         >
             <div className="flex flex-row items-center gap-2">
-                <img className="rounded-full" width="32" height="32" alt="" src={img} />
+                <div className="w-12 h-11 rounded-full overflow-hidden">
+
+                    <img className="rounded w-full h-full object-cover" alt="" src={img} />
+                </div>
                 <div className="flex flex-col">
                     <figcaption className="text-sm font-medium text-black dark:text-white">{name}</figcaption>
                     <p className="text-xs font-medium text-gray-700 dark:text-gray-400">{username}</p>
                 </div>
             </div>
+            <Rating className="px-3 py-2" name="read-only" value={ratingvalue} readOnly />
             <blockquote className="mt-2 text-sm text-black dark:text-gray-200">{body}</blockquote>
         </figure>
     );

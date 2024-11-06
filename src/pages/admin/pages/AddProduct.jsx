@@ -10,6 +10,8 @@ function AddProduct() {
     const [isloading, setisloading] = useState(false);
     const [mp3File, setMp3File] = useState(null);
     const [wavFile, setWavFile] = useState(null);
+    const [mp3Url, setmp3Url] = useState(null);
+    const [coverUrl, setCoverUrl] = useState(null);
     const [zipFile, setZipFile] = useState(null);
     const [imageUrl, setimageUrl] = useState(null);
     const [title, setTitle] = useState('qqw');
@@ -51,6 +53,7 @@ function AddProduct() {
 
     const handleUpload = async () => {
         if (!mp3File || !wavFile || !zipFile || !imageUrl || licenses.some((license) => !license.price)) {
+            console.log("mp3 filr ", mp3File, "wav file ", wavFile, "zip file ", zipFile, "image url ", imageUrl)
             toast.error('Please fill out all required fields.');
             return;
         }
@@ -72,6 +75,8 @@ function AddProduct() {
                 image: coverImages,
                 mp3File: mp3Files,
                 wavFile,
+                coverUrl,
+                mp3Url,
                 zipFile,
                 time,
                 bpm: parseInt(bpm),
@@ -125,7 +130,23 @@ function AddProduct() {
                         onChange={handleMp3Change}
                         className="block w-full text-sm text-gray-700 py-2 px-3 border border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-200 focus:ring-offset-2"
                     />
-                    <label className="mt-2 block text-sm font-medium text-gray-700">Select WAV:</label>
+                    <label className="mt-2 block text-sm font-medium text-gray-700">Cover Gdrive</label>
+                    <input
+                        type="text"
+                        placeholder="Wav Link"
+                        value={coverUrl}
+                        onChange={(e) => setCoverUrl(e.target.value)}
+                        className="w-full px-3 py-2 text-base text-gray-700 bg-white rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-600"
+                    />
+                    <label className="mt-2 block text-sm font-medium text-gray-700">MP3 Gdrive</label>
+                    <input
+                        type="text"
+                        placeholder="Wav Link"
+                        value={mp3Url}
+                        onChange={(e) => setmp3Url(e.target.value)}
+                        className="w-full px-3 py-2 text-base text-gray-700 bg-white rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-600"
+                    />
+                    <label className="mt-2 block text-sm font-medium text-gray-700">Wav Gdrive</label>
                     <input
                         type="text"
                         placeholder="Wav Link"
@@ -133,13 +154,15 @@ function AddProduct() {
                         onChange={(e) => setWavFile(e.target.value)}
                         className="w-full px-3 py-2 text-base text-gray-700 bg-white rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-600"
                     />
+
+
                     {/* <input
                         type="file"
                         accept=".mp3"
                         onChange={handleWavChange}
                         className="block w-full text-sm text-gray-700 py-2 px-3 border border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-200 focus:ring-offset-2"
                     /> */}
-                    <label className="mt-2 block text-sm font-medium text-gray-700">Select ZIP:</label>
+                    <label className="mt-2 block text-sm font-medium text-gray-700">Zip Gdrive</label>
                     {/* <input
                         type="file"
                         accept=".zip"

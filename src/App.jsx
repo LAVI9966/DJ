@@ -16,7 +16,7 @@ import Nopage from './pages/nopage/Nopage'
 import MyStates from './context/data/myStates'
 import Login from './pages/registration/Login'
 import Signup from './pages/registration/Signup'
-import ProductInfo from './pages/productInfo/ProductInfo'
+import ProductInfo from './pages/productInfo/SongDetails'
 import AddProduct from './pages/admin/pages/AddProduct'
 import UpdateProduct from './pages/admin/pages/UpdateProduct'
 import { ToastContainer } from "react-toastify";
@@ -24,10 +24,12 @@ import 'react-toastify/dist/ReactToastify.css'
 import Allproducts from './pages/allproduct/Allproduct'
 import Player from './components/player/Player'
 import ContactUs from './components/contact/Contact'
-
+import FullPageProfile from './components/profile/Profile'
+import Onboarding from './components/profile/newProfile'
+import SongDetails from './pages/productInfo/SongDetails'
 
 function App() {
-  const [count, setCount] = useState(0)
+
 
   return (
     <>
@@ -35,9 +37,22 @@ function App() {
         <Router>
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/order" element={
+            <Route path="/orders" element={
               <ProtectedRoute>
                 <Order />
+              </ProtectedRoute>
+            } />
+            <Route path="/order/:id" element={
+              <ProtectedRoute>
+                <SongDetails />
+              </ProtectedRoute>
+            } />
+
+
+            <Route path="/profile" element={
+              <ProtectedRoute>
+                {/* <FullPageProfile /> */}
+                <Onboarding></Onboarding>
               </ProtectedRoute>
             } />
             <Route path="/cart" element={<Cart />} />
@@ -55,6 +70,7 @@ function App() {
 
               <ProtectedRoute>
                 <AddProduct />
+
 
               </ProtectedRoute>
             } />

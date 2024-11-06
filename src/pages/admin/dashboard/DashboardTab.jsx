@@ -19,8 +19,8 @@ function DashboardTab() {
     const deletetrack = async (item) => {
         try {
             console.log("me yaha agya", item);
-            // await deleteDoc(doc(fireDB, 'products', item.id));
-            const response = await axios.delete('http://localhost:3000/deletefile', {
+
+            const response = await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/deletefile`, {
                 data: {
                     item: item
                 }

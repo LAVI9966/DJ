@@ -69,7 +69,7 @@ const MultiStepForm = ({ closePopup }) => {
         };
 
         try {
-            const response = await axios.post("http://localhost:3000/adduser", { userData });
+            const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/adduser`, { userData });
             console.log("User registered:", response);
             if (response.status === 201) {
                 const storedUserData = {

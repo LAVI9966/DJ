@@ -252,10 +252,17 @@ function Allproducts() {
         toast.success('License removed from cart');
     };
 
+    const fun = async () => {
+        console.log(import.meta.env.VITE_BACKEND_URL)
+        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/`);
+        console.log(response.data)
+    }
+
     return (
         <Layout>
             <Meteors number={30} />
             <section className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900">
+
                 <div className="container px-4 py-12 mx-auto">
                     {/* Header Section */}
                     <div className="text-center mb-16">
@@ -266,6 +273,7 @@ function Allproducts() {
                         >
                             Premium Music Marketplace
                         </motion.h1>
+
                         <motion.div
                             initial={{ width: 0 }}
                             animate={{ width: "100px" }}
@@ -302,7 +310,19 @@ function Allproducts() {
                                             animate={{ opacity: 1, y: 0 }}
                                             className="border-b border-gray-800/50 hover:bg-gray-800/30 transition-colors"
                                         >
-                                            <td className="p-4 text-gray-400">{index + 1}</td>
+                                            <td className="text-gray-400">
+                                                <motion.button
+                                                    whileHover={{ scale: 1.1 }}
+                                                    whileTap={{ scale: 0.95 }}
+                                                    onClick={() => toggleFavorite(item)}
+                                                    className="p-3 hover:bg-gray-800/50 text-white rounded-xl transition-all"
+                                                >
+                                                    {isPresent(item._id) ? (
+                                                        <MdFavorite className="text-red-500" size={22} />
+                                                    ) : (
+                                                        <MdFavoriteBorder className="text-gray-400 hover:text-red-500" size={22} />
+                                                    )}
+                                                </motion.button></td>
                                             <td className="p-4">
                                                 <div
                                                     onClick={() => playmusic(item, index)}
@@ -335,18 +355,6 @@ function Allproducts() {
                                                     >
                                                         <FaShoppingCart />
                                                     </motion.button>
-                                                    <motion.button
-                                                        whileHover={{ scale: 1.1 }}
-                                                        whileTap={{ scale: 0.95 }}
-                                                        onClick={() => toggleFavorite(item)}
-                                                        className="p-3 hover:bg-gray-800/50 text-white rounded-xl transition-all"
-                                                    >
-                                                        {isPresent(item._id) ? (
-                                                            <MdFavorite className="text-red-500" size={22} />
-                                                        ) : (
-                                                            <MdFavoriteBorder className="text-gray-400 hover:text-red-500" size={22} />
-                                                        )}
-                                                    </motion.button>
                                                 </div>
                                             </td>
                                         </motion.tr>
@@ -372,21 +380,21 @@ function Allproducts() {
 
                 {/* Custom Scrollbar Styles */}
                 <style jsx global>{`
-                .custom-scrollbar::-webkit-scrollbar {
-                    width: 8px;
-                }
-                .custom-scrollbar::-webkit-scrollbar-track {
+            .custom - scrollbar:: -webkit - scrollbar {
+                width: 8px;
+            }
+                .custom - scrollbar:: -webkit - scrollbar - track {
                     background: rgba(0, 0, 0, 0.1);
-                    border-radius: 4px;
-                }
-                .custom-scrollbar::-webkit-scrollbar-thumb {
-                    background: rgba(59, 130, 246, 0.5);
-                    border-radius: 4px;
-                }
-                .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-                    background: rgba(59, 130, 246, 0.7);
-                }
-            `}</style>
+                    border- radius: 4px;
+    }
+                .custom - scrollbar:: -webkit - scrollbar - thumb {
+        background: rgba(59, 130, 246, 0.5);
+        border - radius: 4px;
+    }
+                .custom - scrollbar:: -webkit - scrollbar - thumb:hover {
+        background: rgba(59, 130, 246, 0.7);
+    }
+    `}</style>
             </section>
         </Layout>
     );

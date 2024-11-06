@@ -14,9 +14,9 @@ createRoot(document.getElementById('root')).render(
     <Auth0Provider
       domain="dev-msjrwkev4m8lmvoq.us.auth0.com"
       clientId="BOHu9cjrlAcceqg0byDe4FfSosihBY2t"
-      authorizationParams={{
-        redirect_uri: window.location.origin
-      }}
+      authorizationParams={{ redirect_uri: window.location.origin }}
+      useRefreshTokens={true}
+      cacheLocation="localstorage"
     >
       <FavoritesProvider>
 

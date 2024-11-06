@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import MyContext from './myContext';
 import {
     Timestamp, addDoc, collection,
@@ -80,7 +80,7 @@ const MyStates = ({ children }) => {
     const getProductData = async () => {
         setLoading(true);
         try {
-            const response = await axios.get('http://localhost:3000/fetchallsongs');
+            const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/fetchallsongs`);
             setproduct(response.data);
             console.log("state se product", response.data);
         } catch (error) {
@@ -94,7 +94,7 @@ const MyStates = ({ children }) => {
     const getOrderData = async () => {
         setLoading(true);
         try {
-            const response = await axios.get('http://localhost:3000/allorders');
+            const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/allorders`);
             setOrder(response.data);
         } catch (error) {
             console.log("Error fetching orders:", error);
@@ -125,13 +125,13 @@ const MyStates = ({ children }) => {
 
         setFavoritesLoading(true);
         try {
-            const response = await axios.get('http://localhost:3000/get-favorites', {
+            const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/get-favorites`, {
                 params: { userid }
             });
             setFavSongs(response.data.songlist || []);
         } catch (error) {
-            console.error("Error fetching favorites:", error);
-            toast.error("Failed to load favorites");
+            // console.error("Error fetching favorites:", error);
+            // toast.error("Failed to load favorites");
         } finally {
             setFavoritesLoading(false);
         }
@@ -145,7 +145,7 @@ const MyStates = ({ children }) => {
         }
 
         try {
-            const response = await axios.post('http://localhost:3000/add-to-favorites', {
+            const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/add-to-favorites`, {
                 songid: product._id,
                 userid
             });
@@ -201,7 +201,16 @@ const MyStates = ({ children }) => {
             setLoading(false);
         }
     };
-
+    const beatsref = useRef(null);
+    const contactref = useRef(null);
+    const licensingref = useRef(null);
+    const servicesref = useRef(null);
+    const scrollToSection = (ref) => {
+        ref.current.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start' // Aligns the top of the section with the top of the viewport
+        });
+    };
     return (
         <MyContext.Provider value={{
             mode,
@@ -235,7 +244,9 @@ const MyStates = ({ children }) => {
             favoritesLoading,
             handleFavoriteToggle,
             isPresent,
-            fetchFavSongs
+            fetchFavSongs,
+            beatsref, licensingref, servicesref,
+            contactref, scrollToSection
         }}>
             {children}
         </MyContext.Provider>
