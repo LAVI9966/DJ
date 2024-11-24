@@ -14,12 +14,12 @@ function AddProduct() {
     const [coverUrl, setCoverUrl] = useState(null);
     const [zipFile, setZipFile] = useState(null);
     const [imageUrl, setimageUrl] = useState(null);
-    const [title, setTitle] = useState('qqw');
-    const [key, setKey] = useState('sdf')
-    const [genre, setGenre] = useState('asdaf');
+    const [title, setTitle] = useState(null);
+    const [key, setKey] = useState(null)
+    const [genre, setGenre] = useState(null);
     const [releaseDate, setReleaseDate] = useState('');
-    const [time, setTime] = useState('12');
-    const [bpm, setBPM] = useState('12');
+    const [time, setTime] = useState(null);
+    const [bpm, setBPM] = useState(null);
 
     const [licenses, setLicenses] = useState([
         { name: 'MP3 License', price: '21' },
@@ -223,7 +223,7 @@ function AddProduct() {
                     />
                     <input
                         type="number"
-                        placeholder="BPM"
+                        placeholder="BPM 40-200"
                         value={bpm}
                         onChange={(e) => setBPM(e.target.value)}
                         className="w-full px-3 py-2 text-base text-gray-700 bg-white rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-600"
