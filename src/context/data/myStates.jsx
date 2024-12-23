@@ -104,19 +104,6 @@ const MyStates = ({ children }) => {
         }
     };
 
-    const getUserData = async () => {
-        setLoading(true);
-        try {
-            const result = await getDocs(collection(fireDB, "users"));
-            const usersArray = result.docs.map(doc => doc.data());
-            setUser(usersArray);
-        } catch (error) {
-            console.log(error);
-            toast.error("Failed to fetch users");
-        } finally {
-            setLoading(false);
-        }
-    };
 
     // New favorites-related functions
     const fetchFavSongs = async () => {
@@ -165,7 +152,7 @@ const MyStates = ({ children }) => {
     useEffect(() => {
         getProductData();
         getOrderData();
-        getUserData();
+
         fetchFavSongs();
     }, []);
 

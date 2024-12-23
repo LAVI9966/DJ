@@ -5,7 +5,6 @@ function ContactUs() {
     const context = useContext(MyContext);
     const { contactref } = context;
 
-    // Form state for validation
     const [formData, setFormData] = useState({ name: "", email: "", message: "" });
     const [errors, setErrors] = useState({});
 
@@ -23,25 +22,28 @@ function ContactUs() {
     };
 
     const handleSubmit = (e) => {
-        if (!validateForm()) {
-            e.preventDefault();
+        e.preventDefault();
+        if (validateForm()) {
+            const mailtoLink = `mailto:lavishgehlod@gmail.com?subject=Message from ${encodeURIComponent(
+                formData.name
+            )}&body=${encodeURIComponent(
+                `Name: ${formData.name}\nEmail: ${formData.email}\n\nMessage:\n${formData.message}`
+            )}`;
+            window.location.href = mailtoLink;
         }
     };
 
     return (
         <div ref={contactref} className="bg-black text-white flex flex-col md:flex-row w-full min-h-screen py-8" id="contactme">
-            {/* Left Section - Contact Text */}
             <div className="flex-1 flex items-center justify-center p-8">
                 <div className="text-center md:text-left space-y-4">
                     <h1 className="text-4xl font-semibold">Contact Me</h1>
                     <p>
                         <a
-                            href="https://mail.google.com/mail/?view=cm&fs=1&to=durshbeats@gmail.com"
-                            target="_blank"
-                            rel="noopener noreferrer"
+                            href="mailto:lavishgehlod@gmail.com"
                             className="text-white hover:text-red-500"
                         >
-                            Email: durshbeats@gmail.com
+                            Email: lavishgehlod@gmail.com
                         </a>
                     </p>
                     <p>
@@ -86,15 +88,8 @@ function ContactUs() {
                 </div>
             </div>
 
-            {/* Right Section - Contact Form */}
             <div className="flex-1 flex flex-col items-center justify-center p-8">
-                <form
-                    action="mailto:durshbeats@gmail.com"
-                    method="post"
-                    encType="text/plain"
-                    onSubmit={handleSubmit}
-                    className="w-full md:w-3/4 space-y-4"
-                >
+                <form onSubmit={handleSubmit} className="w-full md:w-3/4 space-y-4">
                     <input
                         type="text"
                         name="name"

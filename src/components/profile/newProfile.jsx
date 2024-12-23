@@ -48,6 +48,7 @@ const UserRegistrationFlow = () => {
                 const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/getuser`, {
                     params: { email: user.email }
                 });
+                console.log("This is my chut ", response.data)
 
                 if (response.data) {
                     setExistingUserData(response.data);
@@ -59,11 +60,13 @@ const UserRegistrationFlow = () => {
                     );
 
                     setFavSongs(favoritesResponse.data.songlist || []);
-                    console.log("This is my chut ", favSongs)
                 }
             } catch (error) {
                 console.error("Error fetching user data:", error);
-                toast.error("Failed to fetch user data");
+                if (error.response.status == 404) {
+
+                    toast.info("No songs Added to Favorite");
+                }
             } finally {
                 setIsLoading(false);
             }

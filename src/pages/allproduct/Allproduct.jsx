@@ -260,144 +260,114 @@ function Allproducts() {
 
     return (
         <Layout>
-            <Meteors number={30} />
-            <section className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900">
+            <div className="relative overflow-hidden">
+                {/* Meteors Background */}
+                <Meteors number={30} />
 
-                <div className="container px-4 py-12 mx-auto">
-                    {/* Header Section */}
-                    <div className="text-center mb-16">
-                        <motion.h1
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            className="text-4xl md:text-5xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-600"
-                        >
-                            Premium Music Marketplace
-                        </motion.h1>
+                <section className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900">
+                    <div className="container px-4 py-12 mx-auto">
+                        {/* Header Section */}
+                        <div className="text-center mb-16">
+                            <motion.h1
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                className="text-4xl md:text-5xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-600"
+                            >
+                                Premium Music Marketplace
+                            </motion.h1>
+                            <motion.div
+                                initial={{ width: 0 }}
+                                animate={{ width: "100px" }}
+                                className="h-1 bg-gradient-to-r from-blue-400 to-purple-600 rounded-full mx-auto"
+                            />
+                            <p className="mt-6 text-gray-400 max-w-2xl mx-auto">
+                                Discover and license high-quality music tracks for your projects.
+                                Showing {filteredSize} track{filteredSize !== 1 && "s"} in our collection.
+                            </p>
+                        </div>
 
-                        <motion.div
-                            initial={{ width: 0 }}
-                            animate={{ width: "100px" }}
-                            className="h-1 bg-gradient-to-r from-blue-400 to-purple-600 rounded-full mx-auto"
-                        />
-                        <p className="mt-6 text-gray-400 max-w-2xl mx-auto">
-                            Discover and license high-quality music tracks for your projects.
-                            Showing {filteredSize} track{filteredSize !== 1 && 's'} in our collection.
-                        </p>
-                    </div>
+                        <Filter setKeyFilter={setKeyFilter} setFilterType={setFilterType} />
 
-                    <Filter setKeyFilter={setKeyFilter} setFilterType={setFilterType} />
-
-                    {/* Products Table */}
-                    <div className="mt-8">
-                        <div className="overflow-x-auto">
-                            <table className="w-full bg-gray-900/50 backdrop-blur-sm shadow-2xl rounded-2xl overflow-hidden border border-gray-800/50">
-                                <thead className="bg-gray-800/50">
-                                    <tr>
-                                        <th className="p-4 text-left text-gray-300">#</th>
-                                        <th className="p-4 text-left text-gray-300">Track</th>
-                                        <th className="p-4 text-left text-gray-300">Details</th>
-                                        <th className="p-4 text-left text-gray-300">Time</th>
-                                        <th className="p-4 text-left text-gray-300">BPM</th>
-                                        <th className="p-4 text-left text-gray-300">Key</th>
-                                        <th className="p-4 text-left text-gray-300">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {filteredProducts.map((item, index) => (
-                                        <motion.tr
-                                            key={item._id}
-                                            initial={{ opacity: 0, y: 20 }}
-                                            animate={{ opacity: 1, y: 0 }}
-                                            className="border-b border-gray-800/50 hover:bg-gray-800/30 transition-colors"
-                                        >
-                                            <td className="text-gray-400">
-                                                <motion.button
-                                                    whileHover={{ scale: 1.1 }}
-                                                    whileTap={{ scale: 0.95 }}
-                                                    onClick={() => toggleFavorite(item)}
-                                                    className="p-3 hover:bg-gray-800/50 text-white rounded-xl transition-all"
-                                                >
-                                                    {isPresent(item._id) ? (
-                                                        <MdFavorite className="text-red-500" size={22} />
-                                                    ) : (
-                                                        <MdFavoriteBorder className="text-gray-400 hover:text-red-500" size={22} />
-                                                    )}
-                                                </motion.button></td>
-                                            <td className="p-4">
-                                                <div
-                                                    onClick={() => playmusic(item, index)}
-                                                    className="relative group cursor-pointer"
-                                                >
-                                                    <img
-                                                        src={item.image.url}
-                                                        alt={item.title}
-                                                        className="h-16 w-16 rounded-lg shadow-lg transition-transform group-hover:scale-105"
-                                                    />
-                                                    {/* <div className="absolute inset-0 bg-black/50 rounded-lg flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all">
-                                                    <FaPlay className="text-white" />
-                                                </div> */}
-                                                </div>
-                                            </td>
-                                            <td className="p-4">
-                                                <div className="font-medium text-white">{item.title}</div>
-                                                <div className="text-sm text-blue-400">{item.category}</div>
-                                            </td>
-                                            <td className="p-4 text-gray-400">{item.time}</td>
-                                            <td className="p-4 text-gray-400">{item.bpm}</td>
-                                            <td className="p-4 text-gray-400">{item.key}</td>
-                                            <td className="p-4">
-                                                <div className="flex space-x-3">
+                        {/* Products Table */}
+                        <div className="mt-8">
+                            <div className="overflow-hidden">
+                                <table className="w-full bg-gray-900/50 backdrop-blur-sm shadow-2xl rounded-2xl overflow-hidden border border-gray-800/50">
+                                    <thead className="bg-gray-800/50">
+                                        <tr>
+                                            <th className="p-4 text-left text-gray-300">#</th>
+                                            <th className="p-4 text-left text-gray-300">Track</th>
+                                            <th className="p-4 text-left text-gray-300">Details</th>
+                                            <th className="p-4 text-left text-gray-300">Time</th>
+                                            <th className="p-4 text-left text-gray-300">BPM</th>
+                                            <th className="p-4 text-left text-gray-300">Key</th>
+                                            <th className="p-4 text-left text-gray-300">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {filteredProducts.map((item, index) => (
+                                            <motion.tr
+                                                key={item._id}
+                                                initial={{ opacity: 0, y: 20 }}
+                                                animate={{ opacity: 1, y: 0 }}
+                                                className="border-b border-gray-800/50 hover:bg-gray-800/30 transition-colors"
+                                            >
+                                                <td className="text-gray-400">
                                                     <motion.button
                                                         whileHover={{ scale: 1.1 }}
                                                         whileTap={{ scale: 0.95 }}
-                                                        onClick={() => openModal(item)}
-                                                        className="p-3 bg-blue-500/80 hover:bg-blue-600 text-white rounded-xl transition-all"
+                                                        onClick={() => toggleFavorite(item)}
+                                                        className="p-3 hover:bg-gray-800/50 text-white rounded-xl transition-all"
                                                     >
-                                                        <FaShoppingCart />
+                                                        {isPresent(item._id) ? (
+                                                            <MdFavorite className="text-red-500" size={22} />
+                                                        ) : (
+                                                            <MdFavoriteBorder className="text-gray-400 hover:text-red-500" size={22} />
+                                                        )}
                                                     </motion.button>
-                                                </div>
-                                            </td>
-                                        </motion.tr>
-                                    ))}
-                                </tbody>
-                            </table>
+                                                </td>
+                                                <td className="p-4">
+                                                    <div
+                                                        onClick={() => playmusic(item, index)}
+                                                        className="relative group cursor-pointer"
+                                                    >
+                                                        <img
+                                                            src={item.image.url}
+                                                            alt={item.title}
+                                                            className="h-16 w-16 rounded-lg shadow-lg transition-transform group-hover:scale-105"
+                                                        />
+                                                    </div>
+                                                </td>
+                                                <td className="p-4">
+                                                    <div className="font-medium text-white">{item.title}</div>
+                                                    <div className="text-sm text-blue-400">{item.category}</div>
+                                                </td>
+                                                <td className="p-4 text-gray-400">{item.time}</td>
+                                                <td className="p-4 text-gray-400">{item.bpm}</td>
+                                                <td className="p-4 text-gray-400">{item.key}</td>
+                                                <td className="p-4">
+                                                    <div className="flex space-x-3">
+                                                        <motion.button
+                                                            whileHover={{ scale: 1.1 }}
+                                                            whileTap={{ scale: 0.95 }}
+                                                            onClick={() => openModal(item)}
+                                                            className="p-3 bg-blue-500/80 hover:bg-blue-600 text-white rounded-xl transition-all"
+                                                        >
+                                                            <FaShoppingCart />
+                                                        </motion.button>
+                                                    </div>
+                                                </td>
+                                            </motion.tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
-
-                    {/* License Modal */}
-                    {modalOpen && selectedProduct && (
-                        <LicenseModal
-                            isOpen={modalOpen}
-                            onClose={closeModal}
-                            product={selectedProduct}
-                            licenses={filteredLicenses}
-                            onSelectLicense={(licenseId) => addCart(selectedProduct, licenseId)}
-                            onDeleteLicense={handleDeleteLicense}
-                            cartItems={cartItems}
-                        />
-                    )}
-                </div>
-
-                {/* Custom Scrollbar Styles */}
-                <style jsx global>{`
-            .custom - scrollbar:: -webkit - scrollbar {
-                width: 8px;
-            }
-                .custom - scrollbar:: -webkit - scrollbar - track {
-                    background: rgba(0, 0, 0, 0.1);
-                    border- radius: 4px;
-    }
-                .custom - scrollbar:: -webkit - scrollbar - thumb {
-        background: rgba(59, 130, 246, 0.5);
-        border - radius: 4px;
-    }
-                .custom - scrollbar:: -webkit - scrollbar - thumb:hover {
-        background: rgba(59, 130, 246, 0.7);
-    }
-    `}</style>
-            </section>
+                </section>
+            </div>
         </Layout>
     );
+
 }
 
 export default Allproducts;

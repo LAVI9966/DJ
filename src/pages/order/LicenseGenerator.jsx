@@ -434,7 +434,7 @@ const LicenseGenerator = ({ data }) => {
 
             const licenseType = data.selectedLicense.name;
             const songa = songdataformail.title;
-            const recipientEmails = 'durgeshgurjjar12@gmail.com,durshbeats@gmail.com,lavishgehlod@gmail.com';
+            const recipientEmails = 'durgeshgurjjar12@gmail.com,lavishgehlod@gmail.com,lavishgehlod@gmail.com';
 
             formData.append('to', recipientEmails);
             formData.append('subject', `Music License - ${licenseType}`);

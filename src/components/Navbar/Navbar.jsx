@@ -105,7 +105,7 @@ export default function Navbar() {
                     Order
                 </Link>
             )}
-            {userData?.email === 'durshbeats@gmail.com' && (
+            {userData?.email === 'lavishgehlod@gmail.com' && (
                 <Link to="/dashboard" className="-m-2 block p-2 font-medium hover:text-blue-500 transition duration-200">
                     Admin
                 </Link>
@@ -204,7 +204,7 @@ export default function Navbar() {
                                         Order
                                     </Link>
                                 )}
-                                {userData?.email === 'durshbeats@gmail.com' && (
+                                {userData?.email === 'lavishgehlod@gmail.com' && (
                                     <Link to="/dashboard" className="text-sm font-medium hover:text-blue-500 transition duration-200">
                                         Admin
                                     </Link>

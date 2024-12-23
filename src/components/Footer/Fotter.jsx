@@ -59,7 +59,7 @@ export default function Footer() {
                     <a
                         className="text-gray-400 hover:text-indigo-500 transition-transform duration-200 transform hover:scale-125 hover:shadow-lg"
                         aria-label="Spotify"
-                        href="https://www.spotify.com/"
+                        href="https://open.spotify.com/artist/10tPox05MUPQeKKo5qG1Xc"
                         target="_blank"
                         rel="noopener noreferrer"
                     >
@@ -68,7 +68,7 @@ export default function Footer() {
                     <a
                         className="text-gray-400 hover:text-indigo-500 transition-transform duration-200 transform hover:scale-125 hover:shadow-lg"
                         aria-label="YouTube"
-                        href="https://www.youtube.com/"
+                        href="https://www.youtube.com/@DurshMusic"
                         target="_blank"
                         rel="noopener noreferrer"
                     >

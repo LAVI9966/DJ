@@ -18,6 +18,8 @@ const Hero = () => {
             {/* Meteor background effect */}
             <Meteors number={30} />
 
+
+
             <div className={`text-center relative z-10 bg-[url(${bgimg})] h-76 bg-cover bg-center flex flex-col justify-center items-center`}>
                 <h1 className="text-4xl md:text-6xl font-bold text-white">DURSH BEATS</h1>
                 <p className="text-lg mt-4 text-white">Discover and license industry standard beats</p>
