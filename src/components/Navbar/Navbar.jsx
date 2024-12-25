@@ -9,9 +9,9 @@ import myContext from '../../context/data/myContext';
 import { useAuth0 } from "@auth0/auth0-react";
 import axios from 'axios';
 import MyContext from '../../context/data/myContext';
-
+import { useNavigate } from 'react-router-dom';
 export default function Navbar() {
-
+    const navigate = useNavigate();
     const [open, setOpen] = useState(false);
     const { loginWithPopup, logout, user, isAuthenticated } = useAuth0();
     const context = useContext(myContext);
@@ -77,7 +77,8 @@ export default function Navbar() {
     const handleLogout = () => {
         localStorage.removeItem('user');
         setUserData(null);
-        logout({ returnTo: window.location.origin });
+        navigate('/');
+
     };
 
     const handleLogin = async () => {
