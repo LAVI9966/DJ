@@ -24,7 +24,7 @@ function ContactUs() {
     const handleSubmit = (e) => {
         e.preventDefault();
         if (validateForm()) {
-            const mailtoLink = `mailto:lavishgehlod@gmail.com?subject=Message from ${encodeURIComponent(
+            const mailtoLink = `mailto:durshbeats@gmail.com?subject=Message from ${encodeURIComponent(
                 formData.name
             )}&body=${encodeURIComponent(
                 `Name: ${formData.name}\nEmail: ${formData.email}\n\nMessage:\n${formData.message}`
@@ -40,10 +40,10 @@ function ContactUs() {
                     <h1 className="text-4xl font-semibold">Contact Me</h1>
                     <p>
                         <a
-                            href="mailto:lavishgehlod@gmail.com"
+                            href="mailto:durshbeats@gmail.com"
                             className="text-white hover:text-red-500"
                         >
-                            Email: lavishgehlod@gmail.com
+                            Email: durshbeats@gmail.com
                         </a>
                     </p>
                     <p>

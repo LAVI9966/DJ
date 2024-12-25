@@ -77,6 +77,7 @@ export default function Navbar() {
     const handleLogout = () => {
         localStorage.removeItem('user');
         setUserData(null);
+        logout()
         navigate('/');
 
     };
@@ -106,7 +107,7 @@ export default function Navbar() {
                     Order
                 </Link>
             )}
-            {userData?.email === 'lavishgehlod@gmail.com' && (
+            {userData?.email === 'durshbeats@gmail.com' && (
                 <Link to="/dashboard" className="-m-2 block p-2 font-medium hover:text-blue-500 transition duration-200">
                     Admin
                 </Link>
@@ -205,7 +206,7 @@ export default function Navbar() {
                                         Order
                                     </Link>
                                 )}
-                                {userData?.email === 'lavishgehlod@gmail.com' && (
+                                {userData?.email === 'durshbeats@gmail.com' && (
                                     <Link to="/dashboard" className="text-sm font-medium hover:text-blue-500 transition duration-200">
                                         Admin
                                     </Link>
