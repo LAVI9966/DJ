@@ -116,7 +116,7 @@ function Cart() {
     const buyNow = async () => {
         // Check profile completeness before allowing purchase
         if (!isProfileComplete) {
-            toast.error("Please complete your profile before making a purchase", {
+            toast.error("Please Login Or complete your profile before making a purchase", {
                 position: "top-center",
             });
             navigate('/profile');

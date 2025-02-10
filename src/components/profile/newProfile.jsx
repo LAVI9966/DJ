@@ -48,7 +48,7 @@ const UserRegistrationFlow = () => {
                 const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/getuser`, {
                     params: { email: user.email }
                 });
-                console.log("This is my chut ", response.data)
+                console.log("This is response data ", response.data)
 
                 if (response.data) {
                     setExistingUserData(response.data);
@@ -95,7 +95,7 @@ const UserRegistrationFlow = () => {
                 // Extract the song data from responses
                 const songsData = responses.map(response => response.data);
                 setSongDetails(songsData);
-                console.log("hey pooja i love you ", songDetails)
+                console.log("here it is song details ", songDetails)
             } catch (error) {
                 console.error("Error fetching song details:", error);
                 toast.error("Failed to fetch some song details");

@@ -42,7 +42,6 @@ const styles = StyleSheet.create({
     },
 })
 const LicenseGenerator = ({ data }) => {
-    console.log("data2 ", data);//data jo ara he wo he ek item from upper mode se 
     const [userformail, setuserformail] = useState([]);
     const [AllcartItemsOfUser, setAllCartItemOfUser] = useState([]);
     const { user, isLoading } = useAuth0();
@@ -66,7 +65,6 @@ const LicenseGenerator = ({ data }) => {
 
         // Return in the format "DD-MM-YYYY"
         var dick = `${day}-${month}-${year}`;
-        console.log("dick ", dick)
         return dick
     }
 
@@ -76,15 +74,12 @@ const LicenseGenerator = ({ data }) => {
         const getUser = async () => {
             try {
                 const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/fethcdoc`, { params: { email: userid?.email } });
-                // console.log("User data for license retrieval: ", response.data);
                 setuserformail(response.data); // Update `userformail` state asynchronously
 
                 // Directly calculate `cartItemsArray` using `response.data`
                 const cartItemsArray = response.data.flatMap(item => item.cartItems || []);
                 setAllCartItemOfUser(cartItemsArray);
-                // console.log("pappu", cartItemsArray); // This should now log the expected data
             } catch (error) {
-                // console.log("Error fetching user data: ", error);
             }
         };
         const fetchUserData = async () => {
@@ -94,10 +89,7 @@ const LicenseGenerator = ({ data }) => {
                     params: { email: userid?.email } // Attaching email as query parameter
                 });
                 setUserData(response.data);
-                // console.log("eeeeeeee", response.data)
-                // console.log("Fetched user data:", userData);
             } catch (error) {
-                console.error("Error fetching user data:", error);
             }
         };
         fetchUserData();
@@ -410,31 +402,28 @@ const LicenseGenerator = ({ data }) => {
 
     const [userkijankari, setuserkijankari] = useState(null);
     const handleSubmit = async () => {
+        console.log('submitting');
         try {
             const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/getuser`, { params: { email: userid.email } });
             setuserkijankari(response.data);
-            console.log("chutmarika ", userkijankari)
         } catch (error) {
-            console.log("Error fetching user data: ", error);
+            console.log(error);
         }
         try {
             const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/fetchsong`, { params: { songid: data.id } });
             setsongdataformail(response.data);
 
-            console.log("Song data fetched:", response.data);
-            console.log("Song data for mail:", songdataformail);
         } catch (error) {
-            console.log("Error fetching song data: ", error);
+            console.log(error);
         }
-
         try {
             let pdfDoc;
             let pdfBlob;
             let formData = new FormData();
-
+            console.log('userid', userid);
             const licenseType = data.selectedLicense.name;
             const songa = songdataformail.title;
-            const recipientEmails = 'durgeshgurjjar12@gmail.com,durshbeats@gmail.com,durshbeats@gmail.com';
+            const recipientEmails = userid.email;
 
             formData.append('to', recipientEmails);
             formData.append('subject', `Music License - ${licenseType}`);
@@ -520,18 +509,12 @@ const LicenseGenerator = ({ data }) => {
             });
 
             if (!emailResponse.ok) {
-                console.error('Error sending email:', await emailResponse.text());
+                console.log('Email sending failed');
             }
         } catch (error) {
-            console.error('Request failed:', error);
+            console.error(error);
         }
     };
-
-
-
-
-
-
 
     const DownloadLicence = () => {
         if (data.selectedLicense.name === "MP3 License") {
@@ -564,7 +547,7 @@ const LicenseGenerator = ({ data }) => {
             >
                 {({ loading }) => (loading ? 'Generating...' : 'Download License')}
             </PDFDownloadLink>
-
+            <button className='btn' onClick={handleSubmit}>click me</button>
             <button
                 onClick={handleSubmit}
                 style={{

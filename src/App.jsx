@@ -61,7 +61,7 @@ function App() {
                 <Dashboard />
               </ProtectedRoute>
             } />
-            <Route path="/login" element={<Login />} />
+            <Route path="/login" element={<Home />} />
             <Route path="/contact" element={<ContactUs />} />
             <Route path="/allproducts" element={<Allproducts />} />
             <Route path="/signup" element={<Signup />} />

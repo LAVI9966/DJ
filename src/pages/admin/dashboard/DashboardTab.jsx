@@ -25,7 +25,7 @@ function DashboardTab() {
                     item: item
                 }
             });
-            console.log("ye sesponse he", response);
+            console.log("ye response he", response);
             toast.success('Product Deleted Successfully')
             deleteProduct();
         } catch (error) {

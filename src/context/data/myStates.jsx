@@ -200,8 +200,7 @@ const MyStates = ({ children }) => {
     };
     return (
         <MyContext.Provider value={{
-            mode,
-            toggleMode,
+            mode, toggleMode,
             loading,
             setLoading,
             products,
